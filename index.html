@@ -14,104 +14,26 @@
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-2xl shadow-sm border gap-4">
       <div>
         <h1 class="text-2xl font-bold text-blue-600">Gabaasa Hordoffi Kaayizenii</h1>
-        <p class="text-sm text-gray-500">Data fetched from Google Sheets in real-time</p>
+        <p class="text-sm text-gray-500">Google Sheet live view embedded directly</p>
       </div>
-      <button onclick="fetchData()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl shadow transition text-sm flex items-center">
-        <svg id="refreshIcon" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+      <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSmPYS637CHQ2-quVCCZHQfAWuyzJsPNRyrl2AvIQpz1ZLczXYZjnLgdVgICqje8LoQAM7Ld3QN_TfJ/pubhtml?gid=439812468&single=true" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl shadow transition text-sm flex items-center">
+        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
         </svg>
-        Haaressi (Refresh)
-      </button>
+        Guddisee Iliili (Open Full Sheet)
+      </a>
     </div>
 
-    <!-- Data Table Card -->
-    <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
-      <div id="loadingState" class="p-8 text-center text-gray-500">
-        Data fe'amaa jira, maaloo eegaa... (Loading data...)
-      </div>
-
-      <div id="tableContainer" class="hidden overflow-x-auto">
-        <table class="w-full text-left text-sm">
-          <thead class="bg-gray-50 border-b text-gray-600 uppercase text-xs font-semibold">
-            <tr>
-              <th class="px-4 py-3">ID</th>
-              <th class="px-4 py-3">Guyyaa</th>
-              <th class="px-4 py-3">Kutaa Hojii</th>
-              <th class="px-4 py-3">Mallattoo</th>
-              <th class="px-4 py-3 text-center">Qabxii</th>
-              <th class="px-4 py-3 text-center">Parsenti (%)</th>
-            </tr>
-          </thead>
-          <tbody id="dataTableBody" class="divide-y text-gray-700">
-            <!-- Rows injected dynamically -->
-          </tbody>
-        </table>
-      </div>
-
-      <div id="emptyState" class="hidden p-8 text-center text-gray-500">
-        Galmeen tokkollee hin argamne. (No records found.)
+    <!-- Embedded Google Sheet Card -->
+    <div class="bg-white rounded-2xl shadow-sm border overflow-hidden p-2">
+      <div class="w-full h-[600px] rounded-xl overflow-hidden border">
+        <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSmPYS637CHQ2-quVCCZHQfAWuyzJsPNRyrl2AvIQpz1ZLczXYZjnLgdVgICqje8LoQAM7Ld3QN_TfJ/pubhtml?gid=439812468&amp;single=true&amp;widget=true&amp;headers=false" 
+                class="w-full h-full border-0">
+        </iframe>
       </div>
     </div>
 
   </div>
 
-  <script>
-    // Replace with your Web App URL
-    const WEB_APP_URL = "<iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSmPYS637CHQ2-quVCCZHQfAWuyzJsPNRyrl2AvIQpz1ZLczXYZjnLgdVgICqje8LoQAM7Ld3QN_TfJ/pubhtml?gid=439812468&amp;single=true&amp;widget=true&amp;headers=false"></iframe>";
-
-    async function fetchData() {
-      const loading = document.getElementById('loadingState');
-      const tableContainer = document.getElementById('tableContainer');
-      const emptyState = document.getElementById('emptyState');
-      const tbody = document.getElementById('dataTableBody');
-
-      loading.classList.remove('hidden');
-      tableContainer.classList.add('hidden');
-      emptyState.classList.add('hidden');
-      tbody.innerHTML = '';
-
-      try {
-        const response = await fetch(WEB_APP_URL);
-        const result = await response.json();
-
-        loading.classList.add('hidden');
-
-        if (result.success && result.data.length > 0) {
-          result.data.forEach(item => {
-            const row = document.createElement('tr');
-            row.className = "hover:bg-gray-50 transition";
-            
-            // Format score color badge
-            const pct = parseFloat(item.percentage);
-            const badgeClass = pct >= 80 ? "bg-green-100 text-green-700" :
-                              pct >= 50 ? "bg-yellow-100 text-yellow-700" : "bg-red-100 text-red-700";
-
-            row.innerHTML = `
-              <td class="px-4 py-3 font-mono text-xs font-bold text-gray-600">${item.submissionId || '-'}</td>
-              <td class="px-4 py-3 whitespace-nowrap">${item.date ? item.date.toString().substring(0, 10) : '-'}</td>
-              <td class="px-4 py-3 font-semibold text-gray-800">${item.department || '-'}</td>
-              <td class="px-4 py-3">${item.signature || '-'}</td>
-              <td class="px-4 py-3 text-center font-bold">${item.score || 0} / 100</td>
-              <td class="px-4 py-3 text-center">
-                <span class="inline-block px-2.5 py-1 rounded-full text-xs font-bold ${badgeClass}">
-                  ${item.percentage || 0}%
-                </span>
-              </td>
-            `;
-            tbody.appendChild(row);
-          });
-          tableContainer.classList.remove('hidden');
-        } else {
-          emptyState.classList.remove('hidden');
-        }
-      } catch (error) {
-        loading.classList.add('hidden');
-        alert("Dogoggora: " + error.message);
-      }
-    }
-
-    // Load data when page loads
-    window.addEventListener('DOMContentLoaded', fetchData);
-  </script>
 </body>
 </html>
