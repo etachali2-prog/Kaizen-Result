@@ -8,85 +8,117 @@
 </head>
 <body class="bg-gray-50 text-gray-800 font-sans min-h-screen py-8 px-4">
 
-  <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-2xl p-6 sm:p-8">
+  <div class="max-w-5xl mx-auto bg-white shadow-lg rounded-2xl p-6 sm:p-8">
     
     <!-- Header -->
-    <div class="border-b pb-4 mb-6 text-center sm:text-left">
-      <h1 class="text-2xl font-bold text-blue-600">Cheekliistii Hojii irra Oolmaan Kaayizenii Guyyaa Guyyaan ittiin Hordofamu</h1>
-      <p class="text-sm font-medium text-gray-600 mt-1">Sirna Qulqullinaa, Qindoominaa, Yeroo, Rakkoo fi Fooyya'iinsa Itti Fufiinsa Qabu Hordofuuf</p>
-      <p id="headerDepartment" class="text-xs font-semibold text-blue-500 mt-2 uppercase tracking-wide">Daayirektoreetii Teekinikaa</p>
+    <div class="border-b pb-4 mb-6 flex flex-col sm:flex-row justify-between items-center">
+      <div>
+        <h1 class="text-2xl font-bold text-blue-600">Cheekliistii Hojii irra Oolmaan Kaayizenii</h1>
+        <p class="text-sm font-medium text-gray-600 mt-1">Sirna Qulqullinaa, Qindoominaa, Yeroo, fi Fooyya'iinsa Hordofuuf</p>
+        <p id="headerDepartment" class="text-xs font-semibold text-blue-500 mt-2 uppercase tracking-wide">Daayirektoreetii Teekinikaa</p>
+      </div>
+      <div class="mt-4 sm:mt-0">
+        <button onclick="toggleView('form')" id="formTabBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-semibold shadow mr-2">Foomii Galchuu</button>
+        <button onclick="toggleView('report')" id="reportTabBtn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-xs font-semibold shadow">Daataa Ilaaluu (Reports)</button>
+      </div>
     </div>
 
-    <!-- Form Container -->
-    <form id="kaizenForm" onsubmit="handleFormSubmit(event)" class="space-y-6">
-      
-      <!-- Metadata Section -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-xl border">
-        <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1">Guyyaa (Date)</label>
-          <input type="date" id="date" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1">Kutaa Hojii (Department)</label>
-          <select id="department" required onchange="updateHeaderDepartment(this.value)" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white font-medium text-gray-700">
-            <option value="" disabled selected>Kutaa Hojii Filadhaa</option>
-            <option value="Technic">Technic (Teekinikaa)</option>
-            <option value="Production">Production (Oomisha)</option>
-            <option value="Finance">Finance (Faayinaansii)</option>
-            <option value="Marketing">Marketing (Gabaa)</option>
-            <option value="Procurement">Procurement (Bittaa)</option>
-            <option value="Human Resource">Human Resource (Qabeenya Namaa)</option>
-            <option value="Others">Others (Kan biroo)</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1">Maqaa / Mallattoo (Signature)</label>
-          <input type="text" id="signature" placeholder="Maqaa guutuu galchaa" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
-        </div>
-      </div>
-
-      <!-- Checklist Items Container -->
-      <div>
-        <h2 class="text-lg font-semibold text-gray-700 mb-3">Hojiiwwan Hordofaman (Evaluation Criteria - 20)</h2>
+    <!-- SECTION 1: Form View -->
+    <div id="formSection">
+      <form id="kaizenForm" onsubmit="handleFormSubmit(event)" class="space-y-6">
         
-        <!-- Loading State -->
-        <div id="loadingBox" class="p-6 text-center text-gray-500 bg-gray-50 rounded-xl border">
-          <p class="text-sm font-medium">Gaaffiilee fidaa jira... (Loading checklist criteria...)</p>
+        <!-- Metadata Section -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-gray-50 p-4 rounded-xl border">
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1">Guyyaa (Date)</label>
+            <input type="date" id="date" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1">Kutaa Hojii (Department)</label>
+            <select id="department" required onchange="updateHeaderDepartment(this.value)" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white font-medium text-gray-700">
+              <option value="" disabled selected>Kutaa Hojii Filadhaa</option>
+              <option value="Technic">Technic (Teekinikaa)</option>
+              <option value="Production">Production (Oomisha)</option>
+              <option value="Finance">Finance (Faayinaansii)</option>
+              <option value="Marketing">Marketing (Gabaa)</option>
+              <option value="Procurement">Procurement (Bittaa)</option>
+              <option value="Human Resource">Human Resource (Qabeenya Namaa)</option>
+              <option value="Others">Others (Kan biroo)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1">Maqaa / Mallattoo (Signature)</label>
+            <input type="text" id="signature" placeholder="Maqaa guutuu galchaa" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
+          </div>
         </div>
 
-        <div id="checklistItems" class="space-y-4 hidden">
-          <!-- Dynamically generated checklist rows will appear here -->
+        <!-- Checklist Items Container -->
+        <div>
+          <h2 class="text-lg font-semibold text-gray-700 mb-3">Hojiiwwan Hordofaman (Evaluation Criteria - 20)</h2>
+          
+          <div id="loadingBox" class="p-6 text-center text-gray-500 bg-gray-50 rounded-xl border">
+            <p class="text-sm font-medium">Gaaffiilee fidaa jira... (Loading checklist criteria...)</p>
+          </div>
+
+          <div id="checklistItems" class="space-y-4 hidden">
+            <!-- Dynamically generated checklist rows -->
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="pt-4">
+          <button type="submit" id="submitBtn" disabled class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-semibold py-3 px-4 rounded-xl shadow transition duration-200 flex justify-center items-center">
+            <span id="btnText">Cheekliistii Ergi (Submit Checklist)</span>
+            <svg id="spinner" class="animate-spin ml-2 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+          </button>
+        </div>
+      </form>
+
+      <!-- Success / Result Card -->
+      <div id="resultCard" class="hidden mt-6 bg-green-50 border border-green-200 rounded-2xl p-6 text-center">
+        <h3 class="text-xl font-bold text-green-700 mb-2">Galmeen Milkaa'eera! (Submission Successful!)</h3>
+        <p class="text-sm text-gray-600 mb-4">Gamaaggamni Kaayizenii keessan sirnaan galmeeffameera.</p>
+        <div class="inline-block bg-white border px-6 py-3 rounded-xl shadow-sm text-left space-y-1 mb-4">
+          <p class="text-xs text-gray-500">Submission ID: <span id="resId" class="font-mono font-bold text-gray-700"></span></p>
+          <p class="text-xs text-gray-500">Kutaa Hojii (Department): <span id="resDept" class="font-bold text-gray-700"></span></p>
+          <p class="text-xs text-gray-500">Qabxii (Score / 100): <span id="resScore" class="font-bold text-gray-700"></span> / 100</p>
+          <p class="text-xs text-gray-500">Parsenti (Percentage): <span id="resPercentage" class="font-bold text-blue-600"></span>%</p>
+        </div>
+        <div>
+          <button onclick="resetForm()" class="text-sm bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg shadow">
+            Kan Bira Galchuuf (Submit Another Response)
+          </button>
         </div>
       </div>
+    </div>
 
-      <!-- Submit Button -->
-      <div class="pt-4">
-        <button type="submit" id="submitBtn" disabled class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-semibold py-3 px-4 rounded-xl shadow transition duration-200 flex justify-center items-center">
-          <span id="btnText">Cheekliistii Ergi (Submit Checklist)</span>
-          <svg id="spinner" class="animate-spin ml-2 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-          </svg>
-        </button>
+    <!-- SECTION 2: Report / Display Sheet Data View -->
+    <div id="reportSection" class="hidden space-y-4">
+      <div class="flex justify-between items-center">
+        <h2 class="text-lg font-semibold text-gray-700">Daataa Google Sheet Irraa Fudhame (Submitted Records)</h2>
+        <button onclick="loadSheetData()" class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg shadow">Haaromsuu (Refresh)</button>
       </div>
-    </form>
 
-    <!-- Success / Result Card -->
-    <div id="resultCard" class="hidden mt-6 bg-green-50 border border-green-200 rounded-2xl p-6 text-center">
-      <h3 class="text-xl font-bold text-green-700 mb-2">Galmeen Milkaa'eera! (Submission Successful!)</h3>
-      <p class="text-sm text-gray-600 mb-4">Gamaaggamni Kaayizenii keessan sirnaan galmeeffameera.</p>
-      <div class="inline-block bg-white border px-6 py-3 rounded-xl shadow-sm text-left space-y-1 mb-4">
-        <p class="text-xs text-gray-500">Submission ID: <span id="resId" class="font-mono font-bold text-gray-700"></span></p>
-        <p class="text-xs text-gray-500">Kutaa Hojii (Department): <span id="resDept" class="font-bold text-gray-700"></span></p>
-        <p class="text-xs text-gray-500">Qabxii (Score / 100): <span id="resScore" class="font-bold text-gray-700"></span> / 100</p>
-        <p class="text-xs text-gray-500">Parsenti (Percentage): <span id="resPercentage" class="font-bold text-blue-600"></span>%</p>
+      <div id="reportLoading" class="p-6 text-center text-gray-500 bg-gray-50 rounded-xl border">
+        Daataa fe'aa jira... (Loading records...)
       </div>
-      <div>
-        <button onclick="resetForm()" class="text-sm bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg shadow">
-          Kan Bira Galchuuf (Submit Another Response)
-        </button>
+
+      <div id="reportTableContainer" class="overflow-x-auto border rounded-xl hidden">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr id="tableHeaders" class="bg-blue-600 text-white">
+              <!-- Dynamically added headers -->
+            </tr>
+          </thead>
+          <tbody id="tableBody" class="divide-y divide-gray-200 bg-white">
+            <!-- Dynamically added rows -->
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -94,8 +126,8 @@
 
   <!-- JavaScript Logic -->
   <script>
-    // Google Apps Script Web App URL kee asitti galchi
-    const WEB_APP_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSmPYS637CHQ2-quVCCZHQfAWuyzJsPNRyrl2AvIQpz1ZLczXYZjnLgdVgICqje8LoQAM7Ld3QN_TfJ/pubhtml?gid=1154304342&single=true";
+    // 🌐 Web App URL kee asitti galchi
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwk-PShPdTPkAFI-O99xv1Bih75dBcdabNEoWqBQYqd1Mqpe1jO6vBpBoZKgOf_bNpf/exec";
 
     let fetchedQuestions = [];
 
@@ -103,12 +135,12 @@
       document.getElementById('headerDepartment').textContent = `Daayirektoreetii ${selectedDept}`;
     }
 
-    // Page yommuu banamu gaaffiilee Apps Script irraa fiduu (GET Request)
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('date').valueAsDate = new Date();
       fetchQuestions();
     });
 
+    // 1. Gaaffiilee Apps Script irraa fiduu
     function fetchQuestions() {
       const loadingBox = document.getElementById('loadingBox');
       const container = document.getElementById('checklistItems');
@@ -120,7 +152,6 @@
           if (data.questions && Array.isArray(data.questions)) {
             fetchedQuestions = data.questions;
             renderQuestions(fetchedQuestions);
-            
             loadingBox.classList.add('hidden');
             container.classList.remove('hidden');
             submitBtn.disabled = false;
@@ -130,14 +161,13 @@
         })
         .catch(error => {
           console.error("Error fetching questions:", error);
-          loadingBox.innerHTML = `<p class="text-sm font-semibold text-red-600">Dogoggorri uumame: Gaaffiilee fiduu dadhabe. Web App URL kee mirkaneessi.</p>`;
+          loadingBox.innerHTML = `<p class="text-sm font-semibold text-red-600">Dogoggorri uumame: Gaaffiilee fiduu dadhabe.</p>`;
         });
     }
 
     function renderQuestions(questions) {
       const container = document.getElementById('checklistItems');
       container.innerHTML = '';
-
       questions.forEach((q, index) => {
         const itemDiv = document.createElement('div');
         itemDiv.className = "p-4 border rounded-xl bg-gray-50 space-y-3";
@@ -163,9 +193,9 @@
       });
     }
 
+    // 2. Foomii Erguu (POST Request)
     function handleFormSubmit(event) {
       event.preventDefault();
-
       const submitBtn = document.getElementById('submitBtn');
       const btnText = document.getElementById('btnText');
       const spinner = document.getElementById('spinner');
@@ -182,7 +212,6 @@
       fetchedQuestions.forEach((q, index) => {
         const selectedRadio = document.querySelector(`input[name="question_${index}"]:checked`);
         const commentInput = document.querySelector(`input[data-comment="${index}"]`);
-        
         items.push({
           questionNumber: index + 1,
           questionText: q,
@@ -191,18 +220,11 @@
         });
       });
 
-      const payload = {
-        date: date,
-        department: department,
-        signature: signature,
-        items: items
-      };
+      const payload = { date, department, signature, items };
 
       fetch(WEB_APP_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'text/plain;charset=utf-8',
-        },
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       })
       .then(response => response.json())
@@ -213,15 +235,12 @@
           throw new Error(data.error || "Unknown server error");
         }
       })
-      .catch(error => {
-        onSubmissionFailure(error);
-      });
+      .catch(error => onSubmissionFailure(error));
     }
 
     function onSubmissionSuccess(response, department) {
       document.getElementById('kaizenForm').classList.add('hidden');
       document.getElementById('resultCard').classList.remove('hidden');
-
       document.getElementById('resId').textContent = response.submissionId;
       document.getElementById('resDept').textContent = department;
       document.getElementById('resScore').textContent = response.score;
@@ -230,11 +249,9 @@
 
     function onSubmissionFailure(error) {
       alert("Dogoggorri uumame: " + error.message);
-      
       const submitBtn = document.getElementById('submitBtn');
       const btnText = document.getElementById('btnText');
       const spinner = document.getElementById('spinner');
-      
       submitBtn.disabled = false;
       btnText.textContent = "Cheekliistii Ergi (Submit Checklist)";
       spinner.classList.add('hidden');
@@ -246,14 +263,86 @@
       document.getElementById('headerDepartment').textContent = "Daayirektoreetii Teekinikaa";
       document.getElementById('resultCard').classList.add('hidden');
       document.getElementById('kaizenForm').classList.remove('hidden');
-      
       const submitBtn = document.getElementById('submitBtn');
       const btnText = document.getElementById('btnText');
       const spinner = document.getElementById('spinner');
-      
       submitBtn.disabled = false;
       btnText.textContent = "Cheekliistii Ergi (Submit Checklist)";
       spinner.classList.add('hidden');
+    }
+
+    // 3. Daataa Google Sheet Irraa Fiduun Fuula Irratti Agarsiisuu
+    function loadSheetData() {
+      const loadingDiv = document.getElementById('reportLoading');
+      const tableContainer = document.getElementById('reportTableContainer');
+      const headersTr = document.getElementById('tableHeaders');
+      const tbody = document.getElementById('tableBody');
+
+      loadingDiv.style.display = "block";
+      tableContainer.classList.add('hidden');
+
+      fetch(WEB_APP_URL + "?action=getData")
+        .then(res => res.json())
+        .then(res => {
+          loadingDiv.style.display = "none";
+          if (!res.data || res.data.length === 0) {
+            loadingDiv.innerHTML = "Galmeen tokkollee hin jiru.";
+            loadingDiv.style.display = "block";
+            return;
+          }
+
+          tableContainer.classList.remove('hidden');
+          const rows = res.data;
+          const keys = Object.keys(rows[0]);
+
+          // Headers uumuu
+          headersTr.innerHTML = "";
+          keys.forEach(key => {
+            const th = document.createElement('th');
+            th.className = "px-3 py-2 border-b whitespace-nowrap";
+            th.textContent = key;
+            headersTr.appendChild(th);
+          });
+
+          // Rows uumuu
+          tbody.innerHTML = "";
+          rows.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-gray-50";
+            keys.forEach(key => {
+              const td = document.createElement('td');
+              td.className = "px-3 py-2 border-b whitespace-nowrap text-gray-700";
+              td.textContent = row[key] !== undefined ? row[key] : "";
+              tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+          });
+        })
+        .catch(err => {
+          console.error("Error loading report:", err);
+          loadingDiv.innerHTML = "Daataa fiduun hin danda'amne.";
+        });
+    }
+
+    // Tab jijjiiruu (Form vs Report view)
+    function toggleView(view) {
+      const formSec = document.getElementById('formSection');
+      const reportSec = document.getElementById('reportSection');
+      const formBtn = document.getElementById('formTabBtn');
+      const reportBtn = document.getElementById('reportTabBtn');
+
+      if (view === 'form') {
+        formSec.classList.remove('hidden');
+        reportSec.classList.add('hidden');
+        formBtn.className = "bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-semibold shadow mr-2";
+        reportBtn.className = "bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-xs font-semibold shadow";
+      } else {
+        formSec.classList.add('hidden');
+        reportSec.classList.remove('hidden');
+        reportBtn.className = "bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-semibold shadow";
+        formBtn.className = "bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-xs font-semibold shadow mr-2";
+        loadSheetData(); // Daataa Table keessatti fiduuf
+      }
     }
   </script>
 </body>
