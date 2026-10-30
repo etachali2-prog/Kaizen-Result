@@ -513,7 +513,261 @@ footer {
 ********************************************************/
 
 const WEB_APP_URL =
-"https://script.google.com/macros/s/AKfycbx26G-UhQy2zAURgsmjg0UxZFQWdxp76wQlYdYHmzxe9BUZ5jtJsv-v-imLvWX5wJBm/exec";
+"/************************************************************
+ * MELBA DAILY KAIZEN CHECKLIST SYSTEM
+ * SAVE AND RETRIEVE GOOGLE SHEETS RECORDS
+ ************************************************************/
+
+const SHEET_NAME = "Responses";
+const TOTAL_QUESTIONS = 20;
+
+// List of the 20 Kaizen checklist items
+const CHECKLIST_QUESTIONS = [
+  "1. Bakki hojii qulqulluu fi sirrii ta'uu isaa mirkaneessuu",
+  "2. Meeshaaleen hojii barbaachisoo ta'an bakka isaanii irratti argamuu",
+  "3. Meeshaalee hin barbaachifne bakka hojii irraa qulqulleessuu",
+  "4. Faayilootaa fi dokumeentoota sirnaan qindeessuu",
+  "5. Hojii guyyaa sanaaf karoorfame adda baasuu",
+  "6. Hojii dursa kennamuuf qabu adda baasuu",
+  "7. Hojiiwwan yeroo isaanii eeganii raawwatamuu isaanii hordofuu",
+  "8. Yeroo hojii sirnaan fayyadamuu",
+  "9. Qisaasama yeroo, meeshaa fi qabeenyaa xiqqeessuu",
+  "10. Rakkoo hojii keessatti mul'ate adda baasuu",
+  "11. Sababa rakkoo sanaa adda baasuu",
+  "12. Furmaata rakkoo sanaaf tarkaanfii fudhachuu",
+  "13. Hojii har'aa kan kaleessaa caalaa fooyyeessuuf yaada haaraa qabaachuu",
+  "14. Yaada fooyya'iinsaa hojjettoota irraa walitti qabu",
+  "15. Tajaajila kennamu irratti qulqullinaa fi saffisa mirkaneessuu",
+  "16. Komii ykn yaada maamilaa/hojii waliin walqabatu galmeessuu",
+  "17. Hojiiwwan raawwataman ragaan isaanii sirnaan qabamuu",
+  "18. Seera, qajeelfama fi tartiiba hojii kabajuu",
+  "19. Hojii guyyaa sanaa madaaluu",
+  "20. Boruuf hojii fooyya'aa fi tarkaanfii itti aanu murteessuu"
+];
+
+/************************************************************
+ * 1. SAVE SUBMISSION
+ ************************************************************/
+
+function doPost(e) {
+
+  try {
+
+    // Read submitted JSON
+    const data = JSON.parse(e.postData.contents);
+
+    const date = data.date || "";
+    const department = data.department || "";
+    const signature = data.signature || "";
+    
+    const items = data.items || [];
+
+    if (!date || !department || !signature) {
+      throw new Error("Date, department and signature are required.");
+    }
+
+    if (items.length !== TOTAL_QUESTIONS) {
+      throw new Error("Exactly 20 checklist answers are required.");
+    }
+
+    // Open spreadsheet
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    let sheet = ss.getSheetByName(SHEET_NAME);
+
+    // Create sheet if it does not exist
+    if (!sheet) {
+      sheet = ss.insertSheet(SHEET_NAME);
+    }
+
+    // Create headers if sheet is empty
+    if (sheet.getLastRow() === 0) {
+
+      const headers = [
+        "Submission ID",
+        "Date",
+        "Department",
+        "Signature",
+        "Score",
+        "Percentage"
+      ];
+
+      for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+        headers.push(CHECKLIST_QUESTIONS[i] + " - Answer");
+        headers.push(CHECKLIST_QUESTIONS[i] + " - Comment");
+      }
+
+      sheet.appendRow(headers);
+      sheet.setFrozenRows(1);
+    }
+
+    // Calculate score
+    let score = 0;
+
+    items.forEach(function(item) {
+
+      if (item.answer === "Eeyyee") {
+        score += 5;
+      }
+
+    });
+
+    const percentage = (score / (TOTAL_QUESTIONS * 5)) * 100;
+
+    // Generate submission ID
+    const submissionId =
+      "KAIZEN-" +
+      Utilities.getUuid().substring(0, 8).toUpperCase();
+
+    // Prepare row
+    const rowData = [
+      submissionId,
+      date,
+      department,
+      signature,
+      score,
+      percentage.toFixed(1) + "%"
+    ];
+
+    // Add 20 answers and comments
+    for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+
+      const item = items[i] || {};
+
+      rowData.push(item.answer || "");
+      rowData.push(item.comment || "");
+
+    }
+
+    // Save record
+    sheet.appendRow(rowData);
+
+    return jsonResponse({
+      success: true,
+      message: "Kaizen submission saved successfully.",
+      submissionId: submissionId,
+      score: score,
+      percentage: percentage.toFixed(1)
+    });
+
+  } catch (error) {
+
+    return jsonResponse({
+      success: false,
+      error: error.message
+    });
+
+  }
+
+}
+
+/************************************************************
+ * 2. RETRIEVE RECORDS
+ ************************************************************/
+
+function doGet(e) {
+
+  try {
+
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    const sheet = ss.getSheetByName(SHEET_NAME);
+
+    if (!sheet) {
+
+      return jsonResponse({
+        success: true,
+        total: 0,
+        records: []
+      });
+
+    }
+
+    const lastRow = sheet.getLastRow();
+    const lastColumn = sheet.getLastColumn();
+
+    if (lastRow < 2) {
+
+      return jsonResponse({
+        success: true,
+        total: 0,
+        records: []
+      });
+
+    }
+
+    const values = sheet.getRange(
+      1,
+      1,
+      lastRow,
+      lastColumn
+    ).getValues();
+
+    const headers = values[0];
+
+    const records = [];
+
+    for (let i = 1; i < values.length; i++) {
+
+      const row = values[i];
+
+      if (!row[0]) continue;
+
+      const record = {};
+
+      headers.forEach(function(header, index) {
+
+        let value = row[index];
+
+        if (value instanceof Date) {
+
+          value = Utilities.formatDate(
+            value,
+            Session.getScriptTimeZone(),
+            "yyyy-MM-dd"
+          );
+
+        }
+
+        record[String(header)] = value;
+
+      });
+
+      records.push(record);
+
+    }
+
+    // Latest submissions first
+    records.reverse();
+
+    return jsonResponse({
+      success: true,
+      total: records.length,
+      records: records
+    });
+
+  } catch (error) {
+
+    return jsonResponse({
+      success: false,
+      error: error.message
+    });
+
+  }
+
+}
+
+/************************************************************
+ * 3. JSON RESPONSE
+ ************************************************************/
+
+function jsonResponse(data) {
+
+  return ContentService
+    .createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
+
+}";
 
 
 /********************************************************
