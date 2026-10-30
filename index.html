@@ -1,358 +1,1298 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>MELBA Daily Kaizen Records Dashboard</title>
+
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
-* { box-sizing: border-box; }
-body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: #eef2f7; color: #263445; }
-.header { background: #102d4f; color: white; padding: 25px; }
-.container { max-width: 1450px; margin: auto; padding: 22px; }
-.card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 3px 12px rgba(0,0,0,.06); margin-bottom: 20px; }
-.summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
-.summary-card { background: white; padding: 22px; border-radius: 12px; border-left: 5px solid #2563eb; box-shadow: 0 3px 10px rgba(0,0,0,.05); }
-.summary-card h2 { font-size: 30px; margin: 10px 0 0; color: #102d4f; }
-.filters { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 12px; }
-input, select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 7px; background: white; }
-button { cursor: pointer; border: none; border-radius: 7px; padding: 11px 16px; font-weight: bold; }
-button:disabled { opacity: .6; cursor: wait; }
-.refresh { background: #16a34a; color: white; }
-.refresh:hover { background: #15803d; }
-.secondary { background: #64748b; color: white; }
-.view { background: #2563eb; color: white; padding: 8px 13px; }
-.print { background: #0f766e; color: white; }
-.table-container { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; min-width: 750px; }
-th, td { padding: 13px; border-bottom: 1px solid #e2e8f0; text-align: left; font-size: 13px; }
-th { background: #102d4f; color: white; white-space: nowrap; }
-tr:hover td { background: #f8fafc; }
-.status { padding: 13px; border-radius: 7px; margin-bottom: 18px; background: white; }
-.success { color: #15803d; background: #f0fdf4; }
-.error { color: #b91c1c; background: #fef2f2; }
-.modal { display: none; position: fixed; z-index: 1000; inset: 0; background: rgba(0,0,0,.7); overflow-y: auto; padding: 20px; }
-.modal-content { max-width: 1050px; background: white; margin: 25px auto; padding: 25px; border-radius: 12px; }
-.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.detail-info { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px; }
-.detail-box { background: #f1f5f9; padding: 13px; border-radius: 7px; }
-.detail-box small { color: #64748b; display: block; margin-bottom: 6px; }
-.answer-yes { color: #15803d; font-weight: bold; }
-.answer-no { color: #dc2626; font-weight: bold; }
-.close { background: #dc2626; color: white; }
-footer { text-align: center; color: #64748b; padding: 25px; }
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #eef2f7;
+    color: #263445;
+}
+
+.header {
+    background: #102d4f;
+    color: white;
+    padding: 25px;
+}
+
+.container {
+    max-width: 1500px;
+    margin: auto;
+    padding: 22px;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 3px 12px rgba(0,0,0,.06);
+    margin-bottom: 20px;
+}
+
+.summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.summary-card {
+    background: white;
+    padding: 22px;
+    border-radius: 12px;
+    border-left: 5px solid #2563eb;
+    box-shadow: 0 3px 10px rgba(0,0,0,.05);
+}
+
+.summary-card h2 {
+    font-size: 30px;
+    margin: 10px 0 0;
+    color: #102d4f;
+}
+
+.filters {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: 12px;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    background: white;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    border-radius: 7px;
+    padding: 11px 16px;
+    font-weight: bold;
+}
+
+button:disabled {
+    opacity: .6;
+    cursor: wait;
+}
+
+.refresh {
+    background: #16a34a;
+    color: white;
+}
+
+.refresh:hover {
+    background: #15803d;
+}
+
+.secondary {
+    background: #64748b;
+    color: white;
+}
+
+.view {
+    background: #2563eb;
+    color: white;
+    padding: 8px 13px;
+}
+
+.print {
+    background: #0f766e;
+    color: white;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 750px;
+}
+
+th, td {
+    padding: 13px;
+    border-bottom: 1px solid #e2e8f0;
+    text-align: left;
+    font-size: 13px;
+}
+
+th {
+    background: #102d4f;
+    color: white;
+    white-space: nowrap;
+}
+
+tr:hover td {
+    background: #f8fafc;
+}
+
+.status {
+    padding: 13px;
+    border-radius: 7px;
+    margin-bottom: 18px;
+    background: white;
+}
+
+.success {
+    color: #15803d;
+    background: #f0fdf4;
+}
+
+.error {
+    color: #b91c1c;
+    background: #fef2f2;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    background: rgba(0,0,0,.7);
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.modal-content {
+    max-width: 1100px;
+    background: white;
+    margin: 25px auto;
+    padding: 25px;
+    border-radius: 12px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 10px;
+}
+
+.detail-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.detail-box {
+    background: #f1f5f9;
+    padding: 13px;
+    border-radius: 7px;
+    overflow-wrap: anywhere;
+}
+
+.detail-box small {
+    color: #64748b;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.answer-yes {
+    color: #15803d;
+    font-weight: bold;
+    background: #dcfce7;
+}
+
+.answer-no {
+    color: #dc2626;
+    font-weight: bold;
+    background: #fee2e2;
+}
+
+.answer-empty {
+    color: #64748b;
+}
+
+.answer-badge {
+    display: inline-block;
+    padding: 7px 14px;
+    border-radius: 6px;
+    min-width: 85px;
+    text-align: center;
+}
+
+.close {
+    background: #dc2626;
+    color: white;
+}
+
+.score-box {
+    background: #102d4f;
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+footer {
+    text-align: center;
+    color: #64748b;
+    padding: 25px;
+}
 
 @media(max-width: 800px) {
-    .summary, .filters { grid-template-columns: 1fr; }
-    .detail-info { grid-template-columns: 1fr 1fr; }
-    .header h1 { font-size: 20px; }
+
+    .summary,
+    .filters {
+        grid-template-columns: 1fr;
+    }
+
+    .detail-info {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .header h1 {
+        font-size: 20px;
+    }
+
 }
+
+@media(max-width: 500px) {
+
+    .detail-info {
+        grid-template-columns: 1fr;
+    }
+
+    .container {
+        padding: 12px;
+    }
+
+    .modal-content {
+        padding: 14px;
+    }
+
+}
+
+@media print {
+
+    body {
+        background: white;
+    }
+
+    .header,
+    .container,
+    footer {
+        display: none !important;
+    }
+
+    .modal {
+        display: block !important;
+        position: static;
+        background: white;
+        padding: 0;
+        overflow: visible;
+    }
+
+    .modal-content {
+        max-width: 100%;
+        margin: 0;
+        padding: 5px;
+        box-shadow: none;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .table-container {
+        overflow: visible;
+    }
+
+    table {
+        min-width: 0;
+        width: 100%;
+    }
+
+    th, td {
+        padding: 7px;
+        font-size: 10px;
+    }
+
+    th {
+        background: #102d4f !important;
+        color: white !important;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .answer-yes,
+    .answer-no {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+
+}
+
 </style>
+
 </head>
 
 <body onload="loadRecords()">
 
+<!-- HEADER -->
+
 <header class="header">
+
     <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">
+
         <div>
-            <h1 class="text-2xl font-bold">MELBA DAILY KAIZEN RECORDS</h1>
-            <p class="text-blue-200 mt-2 text-sm">Daily Kaizen Monitoring and Evaluation Dashboard</p>
-            <p class="text-blue-100 text-xs mt-1">Technical Directorate | MELBA PRINTING, PUBLISHING & PACKAGING S.C.</p>
+
+            <h1 class="text-2xl font-bold">
+                MELBA DAILY KAIZEN RECORDS
+            </h1>
+
+            <p class="text-blue-200 mt-2 text-sm">
+                Daily Kaizen Monitoring and Evaluation Dashboard
+            </p>
+
+            <p class="text-blue-100 text-xs mt-1">
+                Technical Directorate | MELBA PRINTING, PUBLISHING & PACKAGING S.C.
+            </p>
+
         </div>
-        <button class="refresh no-print" id="refreshBtn" onclick="loadRecords()">↻ Refresh Records</button>
+
+        <button
+            class="refresh no-print"
+            id="refreshBtn"
+            onclick="loadRecords()">
+
+            ↻ Refresh Records
+
+        </button>
+
     </div>
+
 </header>
 
+
+<!-- MAIN DASHBOARD -->
+
 <main class="container">
-    <div id="status" class="status">Connecting to Google Sheets...</div>
+
+    <div id="status" class="status">
+        Connecting to Google Sheets...
+    </div>
+
+
+    <!-- SUMMARY CARDS -->
 
     <section class="summary">
+
         <div class="summary-card">
-            <p class="text-gray-500 text-sm">Total Submissions</p>
+
+            <p class="text-gray-500 text-sm">
+                Total Submissions
+            </p>
+
             <h2 id="totalRecords">0</h2>
+
         </div>
+
+
         <div class="summary-card" style="border-color:#16a34a">
-            <p class="text-gray-500 text-sm">Departments</p>
+
+            <p class="text-gray-500 text-sm">
+                Departments
+            </p>
+
             <h2 id="totalDepartments">0</h2>
+
         </div>
+
+
         <div class="summary-card" style="border-color:#eab308">
-            <p class="text-gray-500 text-sm">Average Score</p>
+
+            <p class="text-gray-500 text-sm">
+                Average Score
+            </p>
+
             <h2 id="averageScore">0%</h2>
+
         </div>
+
     </section>
 
+
+    <!-- SEARCH AND FILTER -->
+
     <section class="card">
-        <h2 class="font-bold text-lg mb-4 text-[#102d4f]">Search and Filter Records</h2>
+
+        <h2 class="font-bold text-lg mb-4 text-[#102d4f]">
+            Search and Filter Records
+        </h2>
+
         <div class="filters no-print">
-            <input type="text" id="searchInput" placeholder="Search ID, department or signature..." oninput="displayRecords()">
-            <select id="departmentFilter" onchange="displayRecords()">
-                <option value="">All Departments</option>
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search ID, department or signature..."
+                oninput="displayRecords()">
+
+
+            <select
+                id="departmentFilter"
+                onchange="displayRecords()">
+
+                <option value="">
+                    All Departments
+                </option>
+
             </select>
-            <input type="date" id="dateFilter" onchange="displayRecords()">
-            <button class="secondary" onclick="clearFilters()">Clear Filters</button>
+
+
+            <input
+                type="date"
+                id="dateFilter"
+                onchange="displayRecords()">
+
+
+            <button
+                class="secondary"
+                onclick="clearFilters()">
+
+                Clear Filters
+
+            </button>
+
         </div>
+
     </section>
 
+
+    <!-- RECORDS TABLE -->
+
     <section class="card">
+
         <div class="flex flex-wrap justify-between items-center mb-4 gap-3">
-            <h2 class="font-bold text-lg text-[#102d4f]">Google Sheets Submission Records</h2>
-            <span id="recordCount" class="text-sm text-gray-500">0 records</span>
+
+            <h2 class="font-bold text-lg text-[#102d4f]">
+                Google Sheets Submission Records
+            </h2>
+
+            <span
+                id="recordCount"
+                class="text-sm text-gray-500">
+
+                0 records
+
+            </span>
+
         </div>
+
+
         <div class="table-container">
+
             <table>
+
                 <thead>
+
                     <tr>
+
                         <th>No.</th>
+
                         <th>Submission ID</th>
+
                         <th>Date</th>
+
                         <th>Department</th>
+
                         <th>Signature</th>
+
                         <th>Score</th>
+
                         <th>Percentage</th>
+
                         <th class="no-print">Action</th>
+
                     </tr>
+
                 </thead>
+
+
                 <tbody id="recordsBody">
+
                     <tr>
-                        <td colspan="8" style="text-align:center">Loading records...</td>
+
+                        <td colspan="8" style="text-align:center">
+
+                            Loading records...
+
+                        </td>
+
                     </tr>
+
                 </tbody>
+
             </table>
+
         </div>
+
     </section>
+
 </main>
 
+
+<!-- DETAILS MODAL -->
+
 <div id="detailModal" class="modal">
+
     <div class="modal-content">
+
+
         <div class="modal-header">
-            <h2 class="text-xl font-bold text-[#102d4f]">KAIZEN SUBMISSION DETAILS</h2>
-            <button class="close no-print" onclick="closeModal()">Close</button>
+
+            <h2 class="text-xl font-bold text-[#102d4f]">
+
+                KAIZEN SUBMISSION DETAILS
+
+            </h2>
+
+            <button
+                class="close no-print"
+                onclick="closeModal()">
+
+                Close
+
+            </button>
+
         </div>
+
+
         <div id="detailContent"></div>
+
+
         <div class="flex justify-end mt-6 gap-3 no-print">
-            <button class="print" onclick="window.print()">Print Details</button>
-            <button class="secondary" onclick="closeModal()">Close</button>
+
+            <button
+                class="print"
+                onclick="window.print()">
+
+                Print Details
+
+            </button>
+
+            <button
+                class="secondary"
+                onclick="closeModal()">
+
+                Close
+
+            </button>
+
         </div>
+
     </div>
+
 </div>
 
+
+<!-- FOOTER -->
+
 <footer>
-    MELBA PRINTING, PUBLISHING & PACKAGING S.C.<br>
+
+    MELBA PRINTING, PUBLISHING & PACKAGING S.C.
+
+    <br>
+
     Technical Directorate | Daily Kaizen Monitoring System
+
 </footer>
 
+
+
 <script>
-// REPLACE WITH YOUR DEPLOYED GOOGLE APPS SCRIPT WEB APP URL
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw3_5z9p1eCmr9yKon7X3F07Zm9tbsrnaXLntDQAJsj4iRN0vAT6O_vxL-DPG0zpkmq/exec";
+
+/************************************************************
+ * GOOGLE APPS SCRIPT WEB APP URL
+ ************************************************************/
+
+const WEB_APP_URL =
+"https://script.google.com/macros/s/AKfycbyQ05MmAfRQpOp6-8HXuAtJZq2bAFltlilk4ncNXse0YuNZBRbIU42FPzcxrxiwJj5U/exec";
+
+
+/************************************************************
+ * CHECKLIST QUESTIONS
+ *
+ * THESE MUST MATCH GOOGLE SHEETS HEADERS EXACTLY.
+ ************************************************************/
+
+const questions = [
+
+"1. Bakki hojii qulqulluu fi sirrii ta'uu isaa mirkaneessuu",
+
+"2. Meeshaaleen hojii barbaachisoo ta'an bakka isaanii irratti argamuu",
+
+"3. Meeshaalee hin barbaachifne bakka hojii irraa qulqulleessuu",
+
+"4. Faayilootaa fi dokumeentoota sirnaan qindeessuu",
+
+"5. Hojii guyyaa sanaaf karoorfame adda baasuu",
+
+"6. Hojii dursa kennamuuf qabu adda baasuu",
+
+"7. Hojiiwwan yeroo isaanii eeganii raawwatamuu isaanii hordofuu",
+
+"8. Yeroo hojii sirnaan fayyadamuu",
+
+"9. Qisaasama yeroo, meeshaa fi qabeenyaa xiqqeessuu",
+
+"10. Rakkoo hojii keessatti mul'ate adda baasuu",
+
+"11. Sababa rakkoo sanaa adda baasuu",
+
+"12. Furmaata rakkoo sanaaf tarkaanfii fudhachuu",
+
+"13. Hojii har'aa kan kaleessaa caalaa fooyyeessuuf yaada haaraa qabaachuu",
+
+"14. Yaada fooyya'iinsaa hojjettoota irraa walitti qabu",
+
+"15. Tajaajila kennamu irratti qulqullinaa fi saffisa mirkaneessuu",
+
+"16. Komii ykn yaada maamilaa/hojii waliin walqabatu galmeessuu",
+
+"17. Hojiiwwan raawwataman ragaan isaanii sirnaan qabamuu",
+
+"18. Seera, qajeelfama fi tartiiba hojii kabajuu",
+
+"19. Hojii guyyaa sanaa madaaluu",
+
+"20. Boruuf hojii fooyya'aa fi tarkaanfii itti aanu murteessuu"
+
+];
+
+
+/************************************************************
+ * GLOBAL VARIABLES
+ ************************************************************/
 
 let allRecords = [];
+
 let filteredRecords = [];
 
+
+/************************************************************
+ * HTML SECURITY
+ ************************************************************/
+
 function escapeHTML(value) {
+
     return String(value ?? "").replace(/[&<>"']/g, char => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+
     }[char]));
+
 }
 
+
+/************************************************************
+ * LOAD GOOGLE SHEETS RECORDS
+ ************************************************************/
+
 async function loadRecords() {
+
     const status = document.getElementById("status");
+
     const refreshBtn = document.getElementById("refreshBtn");
 
     status.className = "status";
+
     status.textContent = "Connecting to Google Sheets...";
+
     refreshBtn.disabled = true;
 
     try {
-        const response = await fetch(WEB_APP_URL + "?action=getRecords&t=" + Date.now());
-        if (!response.ok) throw new Error("HTTP error: " + response.status);
+
+        const response = await fetch(
+            WEB_APP_URL + "?action=getRecords&t=" + Date.now()
+        );
+
+        if (!response.ok) {
+
+            throw new Error("HTTP error: " + response.status);
+
+        }
 
         const data = await response.json();
-        if (!data.success) throw new Error(data.error || "Unable to retrieve records.");
+
+        if (!data.success) {
+
+            throw new Error(
+                data.error || "Unable to retrieve records."
+            );
+
+        }
 
         allRecords = data.records || [];
+
         updateDepartments();
+
         updateSummary();
+
         displayRecords();
 
         status.className = "status success";
-        status.textContent = `✓ Connected successfully. ${allRecords.length} records retrieved.`;
-    } catch(error) {
-        status.className = "status error";
-        status.textContent = "Connection error: " + error.message;
-        document.getElementById("recordsBody").innerHTML = `<tr><td colspan="8" style="text-align:center;color:red">Failed to load records. Check deployment setup.</td></tr>`;
-    } finally {
-        refreshBtn.disabled = false;
+
+        status.textContent =
+            "✓ Connected successfully. " +
+            allRecords.length +
+            " records retrieved.";
+
     }
+
+    catch(error) {
+
+        status.className = "status error";
+
+        status.textContent =
+            "Connection error: " + error.message;
+
+        document.getElementById("recordsBody").innerHTML = `
+
+            <tr>
+
+                <td colspan="8"
+                    style="text-align:center;color:red">
+
+                    Failed to load records. Check deployment setup.
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+    finally {
+
+        refreshBtn.disabled = false;
+
+    }
+
 }
+
+
+/************************************************************
+ * DEPARTMENT FILTER
+ ************************************************************/
 
 function updateDepartments() {
-    const select = document.getElementById("departmentFilter");
+
+    const select =
+        document.getElementById("departmentFilter");
+
     const currentValue = select.value;
-    const departments = [...new Set(allRecords.map(r => r["Department"]).filter(Boolean))].sort();
 
-    select.innerHTML = '<option value="">All Departments</option>';
-    departments.forEach(dept => {
-        const option = document.createElement("option");
-        option.value = dept;
-        option.textContent = dept;
-        select.appendChild(option);
-    });
-    select.value = departments.includes(currentValue) ? currentValue : "";
-}
+    const departments = [
 
-function updateSummary() {
-    const departments = new Set();
-    let totalScore = 0, count = 0;
+        ...new Set(
 
-    allRecords.forEach(record => {
-        if (record["Department"]) departments.add(record["Department"]);
-        let percentage = parseFloat(String(record["Percentage"] || "").replace("%", ""));
-        if (!isNaN(percentage)) {
-            totalScore += percentage;
-            count++;
-        }
-    });
+            allRecords
+            .map(r => r["Department"])
+            .filter(Boolean)
 
-    document.getElementById("totalRecords").textContent = allRecords.length;
-    document.getElementById("totalDepartments").textContent = departments.size;
-    document.getElementById("averageScore").textContent = count ? (totalScore / count).toFixed(1) + "%" : "0%";
-}
+        )
 
-function displayRecords() {
-    const search = document.getElementById("searchInput").value.toLowerCase().trim();
-    const department = document.getElementById("departmentFilter").value;
-    const date = document.getElementById("dateFilter").value;
+    ].sort();
 
-    filteredRecords = allRecords.filter(record => {
-        const id = String(record["Submission ID"] || "").toLowerCase();
-        const dept = String(record["Department"] || "").toLowerCase();
-        const signature = String(record["Signature"] || "").toLowerCase();
-        const recordDate = String(record["Date"] || "").substring(0, 10);
+    select.innerHTML = `
 
-        return (!search || id.includes(search) || dept.includes(search) || signature.includes(search)) &&
-               (!department || record["Department"] === department) &&
-               (!date || recordDate === date);
-    });
+        <option value="">All Departments</option>
 
-    const tbody = document.getElementById("recordsBody");
-    document.getElementById("recordCount").textContent = filteredRecords.length + " records";
-
-    if (filteredRecords.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:30px">No records found.</td></tr>`;
-        return;
-    }
-
-    tbody.innerHTML = filteredRecords.map((record, index) => {
-        const origIdx = allRecords.indexOf(record);
-        return `
-            <tr>
-                <td>${index + 1}</td>
-                <td class="font-semibold">${escapeHTML(record["Submission ID"])}</td>
-                <td>${escapeHTML(record["Date"])}</td>
-                <td>${escapeHTML(record["Department"])}</td>
-                <td>${escapeHTML(record["Signature"])}</td>
-                <td>${escapeHTML(record["Score"])}/100</td>
-                <td class="font-bold text-green-700">${escapeHTML(record["Percentage"])}</td>
-                <td class="no-print">
-                    <button class="view" onclick="viewDetails(${origIdx})">View</button>
-                </td>
-            </tr>
-        `;
-    }).join("");
-}
-
-function viewDetails(index) {
-    const record = allRecords[index];
-    if (!record) return;
-
-    const questions = [
-        "1. Bakki hojii qulqulluu fi sirrii ta'uu isaa mirkaneessuu",
-        "2. Meeshaaleen hojii barbaachisoo ta'an bakka isaanii irratti argamuu",
-        "3. Meeshaalee hin barbaachifne bakka hojii irraa qulqulleessuu",
-        "4. Faayilootaa fi dokumeentoota sirnaan qindeessuu",
-        "5. Hojii guyyaa sanaaf karoorfame adda baasuu",
-        "6. Hojii dursa kennamuuf qabu adda baasuu",
-        "7. Hojiiwwan yeroo isaanii eeganii raawwatamuu isaanii hordofuu",
-        "8. Yeroo hojii sirnaan fayyadamuu",
-        "9. Qisaasama yeroo, meeshaa fi qabeenyaa xiqqeessuu",
-        "10. Rakkoo hojii keessatti mul'ate adda baasuu",
-        "11. Sababa rakkoo sanaa adda baasuu",
-        "12. Furmaata rakkoo sanaaf tarkaanfii fudhachuu",
-        "13. Hojii har'aa kan kaleessaa caalaa fooyyeessuuf yaada haaraa qabaachuu",
-        "14. Yaada fooyya'iinsaa hojjettoota irraa walitti qabu",
-        "15. Tajaajila kennamu irratti qulqullinaa fi saffisa mirkaneessuu",
-        "16. Komii ykn yaada maamilaa/hojii waliin walqabatu galmeessuu",
-        "17. Hojiiwwan raawwataman ragaan isaanii sirnaan qabamuu",
-        "18. Seera, qajeelfama fi tartiiba hojii kabajuu",
-        "19. Hojii guyyaa sanaa madaaluu",
-        "20. Boruuf hojii fooyya'aa fi tarkaanfii itti aanu murteessuu"
-    ];
-
-    let html = `
-        <div class="detail-info">
-            <div class="detail-box"><small>Submission ID</small><strong>${escapeHTML(record["Submission ID"])}</strong></div>
-            <div class="detail-box"><small>Date</small><strong>${escapeHTML(record["Date"])}</strong></div>
-            <div class="detail-box"><small>Department</small><strong>${escapeHTML(record["Department"])}</strong></div>
-            <div class="detail-box"><small>Signature</small><strong>${escapeHTML(record["Signature"])}</strong></div>
-            <div class="detail-box"><small>Total Score</small><strong>${escapeHTML(record["Score"])} / 100</strong></div>
-            <div class="detail-box"><small>Percentage</small><strong class="text-green-700">${escapeHTML(record["Percentage"])}</strong></div>
-        </div>
-        <h3 class="font-bold text-lg mb-3 text-[#102d4f]">DAILY KAIZEN EVALUATION CHECKLIST</h3>
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 50px;">No.</th>
-                        <th>Evaluation Criteria</th>
-                        <th style="width: 140px;">Answer</th>
-                        <th>Comment / Observation</th>
-                    </tr>
-                </thead>
-                <tbody>
     `;
 
-    for (let i = 1; i <= 20; i++) {
-        const answer = record["Q" + i + " Answer"] || "";
-        const comment = record["Q" + i + " Comment"] || "";
+    departments.forEach(dept => {
 
-        let displayAnswer = answer;
-        if (answer === "Lakki") displayAnswer = "Miti";
+        const option = document.createElement("option");
 
-        let ansClass = (displayAnswer === "Eeyyee") ? "answer-yes" : (displayAnswer === "Miti" ? "answer-no" : "");
+        option.value = dept;
 
-        html += `
+        option.textContent = dept;
+
+        select.appendChild(option);
+
+    });
+
+    select.value =
+        departments.includes(currentValue)
+        ? currentValue
+        : "";
+
+}
+
+
+/************************************************************
+ * SUMMARY CARDS
+ ************************************************************/
+
+function updateSummary() {
+
+    const departments = new Set();
+
+    let totalScore = 0;
+
+    let count = 0;
+
+    allRecords.forEach(record => {
+
+        if (record["Department"]) {
+
+            departments.add(record["Department"]);
+
+        }
+
+        const percentage = parseFloat(
+
+            String(record["Percentage"] || "")
+            .replace("%", "")
+
+        );
+
+        if (!isNaN(percentage)) {
+
+            totalScore += percentage;
+
+            count++;
+
+        }
+
+    });
+
+    document.getElementById("totalRecords")
+        .textContent = allRecords.length;
+
+    document.getElementById("totalDepartments")
+        .textContent = departments.size;
+
+    document.getElementById("averageScore")
+        .textContent = count
+        ? (totalScore / count).toFixed(1) + "%"
+        : "0%";
+
+}
+
+
+/************************************************************
+ * SEARCH AND FILTER RECORDS
+ ************************************************************/
+
+function displayRecords() {
+
+    const search = document
+        .getElementById("searchInput")
+        .value.toLowerCase().trim();
+
+    const department = document
+        .getElementById("departmentFilter")
+        .value;
+
+    const date = document
+        .getElementById("dateFilter")
+        .value;
+
+    filteredRecords = allRecords.filter(record => {
+
+        const id = String(
+            record["Submission ID"] || ""
+        ).toLowerCase();
+
+        const dept = String(
+            record["Department"] || ""
+        ).toLowerCase();
+
+        const signature = String(
+            record["Signature"] || ""
+        ).toLowerCase();
+
+        const recordDate = String(
+            record["Date"] || ""
+        ).substring(0, 10);
+
+        return (
+
+            (
+                !search ||
+                id.includes(search) ||
+                dept.includes(search) ||
+                signature.includes(search)
+            )
+
+            &&
+
+            (
+                !department ||
+                record["Department"] === department
+            )
+
+            &&
+
+            (
+                !date ||
+                recordDate === date
+            )
+
+        );
+
+    });
+
+
+    const tbody = document.getElementById("recordsBody");
+
+    document.getElementById("recordCount")
+        .textContent = filteredRecords.length + " records";
+
+
+    if (filteredRecords.length === 0) {
+
+        tbody.innerHTML = `
+
             <tr>
-                <td>${i}</td>
-                <td>${escapeHTML(questions[i - 1])}</td>
-                <td>
-                    <select class="p-1 border rounded text-sm w-full font-bold ${ansClass}" disabled>
-                        <option value="">--</option>
-                        <option value="Eeyyee" ${displayAnswer === "Eeyyee" ? "selected" : ""}>Eeyyee</option>
-                        <option value="Miti" ${displayAnswer === "Miti" ? "selected" : ""}>Miti</option>
-                    </select>
+
+                <td colspan="8"
+                    style="text-align:center;padding:30px">
+
+                    No records found.
+
                 </td>
-                <td>${escapeHTML(comment)}</td>
+
             </tr>
+
         `;
+
+        return;
+
     }
 
-    html += `</tbody></table></div>`;
-    document.getElementById("detailContent").innerHTML = html;
-    document.getElementById("detailModal").style.display = "block";
+
+    tbody.innerHTML = filteredRecords.map((record, index) => {
+
+        const origIdx = allRecords.indexOf(record);
+
+        return `
+
+            <tr>
+
+                <td>${index + 1}</td>
+
+                <td class="font-semibold">
+
+                    ${escapeHTML(record["Submission ID"])}
+
+                </td>
+
+                <td>${escapeHTML(record["Date"])}</td>
+
+                <td>${escapeHTML(record["Department"])}</td>
+
+                <td>${escapeHTML(record["Signature"])}</td>
+
+                <td>${escapeHTML(record["Score"])}/100</td>
+
+                <td class="font-bold text-green-700">
+
+                    ${escapeHTML(record["Percentage"])}
+
+                </td>
+
+                <td class="no-print">
+
+                    <button
+                        class="view"
+                        onclick="viewDetails(${origIdx})">
+
+                        View
+
+                    </button>
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }).join("");
+
 }
+
+
+/************************************************************
+ * VIEW INDIVIDUAL SUBMISSION DETAILS
+ ************************************************************/
+
+function viewDetails(index) {
+
+    const record = allRecords[index];
+
+    if (!record) return;
+
+
+    let html = `
+
+        <div class="detail-info">
+
+            <div class="detail-box">
+
+                <small>Submission ID</small>
+
+                <strong>
+                    ${escapeHTML(record["Submission ID"])}
+                </strong>
+
+            </div>
+
+
+            <div class="detail-box">
+
+                <small>Date</small>
+
+                <strong>
+                    ${escapeHTML(record["Date"])}
+                </strong>
+
+            </div>
+
+
+            <div class="detail-box">
+
+                <small>Department</small>
+
+                <strong>
+                    ${escapeHTML(record["Department"])}
+                </strong>
+
+            </div>
+
+
+            <div class="detail-box">
+
+                <small>Signature</small>
+
+                <strong>
+                    ${escapeHTML(record["Signature"])}
+                </strong>
+
+            </div>
+
+
+            <div class="detail-box">
+
+                <small>Total Score</small>
+
+                <strong>
+                    ${escapeHTML(record["Score"])} / 100
+                </strong>
+
+            </div>
+
+
+            <div class="detail-box">
+
+                <small>Percentage</small>
+
+                <strong style="color:#15803d">
+
+                    ${escapeHTML(record["Percentage"])}
+
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="score-box">
+
+            <h3 class="font-bold text-lg">
+
+                DAILY KAIZEN EVALUATION CHECKLIST
+
+            </h3>
+
+            <p class="text-sm mt-2">
+
+                Total Questions: 20 |
+                Eeyyee = 5 Points |
+                Lakki = 0 Points
+
+            </p>
+
+        </div>
+
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th style="width:50px">No.</th>
+
+                        <th>Evaluation Criteria</th>
+
+                        <th style="width:140px">Answer</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+    `;
+
+
+    /********************************************************
+     * DISPLAY ALL 20 QUESTIONS AND THEIR ANSWERS
+     *
+     * GOOGLE SHEETS HEADER = QUESTION TEXT
+     ********************************************************/
+
+    for (let i = 0; i < 20; i++) {
+
+        const question = questions[i];
+
+        const answer = String(
+            record[question] || ""
+        ).trim();
+
+
+        let answerClass = "answer-empty";
+
+        if (answer === "Eeyyee") {
+
+            answerClass = "answer-yes";
+
+        }
+
+        else if (answer === "Lakki") {
+
+            answerClass = "answer-no";
+
+        }
+
+
+        html += `
+
+            <tr>
+
+                <td>${i + 1}</td>
+
+                <td>${escapeHTML(question)}</td>
+
+                <td>
+
+                    <span class="answer-badge ${answerClass}">
+
+                        ${escapeHTML(answer || "Not Answered")}
+
+                    </span>
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+
+    html += `
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    `;
+
+
+    document.getElementById("detailContent")
+        .innerHTML = html;
+
+    document.getElementById("detailModal")
+        .style.display = "block";
+
+}
+
+
+/************************************************************
+ * CLOSE DETAILS
+ ************************************************************/
 
 function closeModal() {
-    document.getElementById("detailModal").style.display = "none";
+
+    document.getElementById("detailModal")
+        .style.display = "none";
+
 }
 
+
+/************************************************************
+ * CLEAR FILTERS
+ ************************************************************/
+
 function clearFilters() {
+
     document.getElementById("searchInput").value = "";
+
     document.getElementById("departmentFilter").value = "";
+
     document.getElementById("dateFilter").value = "";
+
     displayRecords();
+
 }
+
+
+/************************************************************
+ * CLOSE MODAL WHEN CLICKING OUTSIDE
+ ************************************************************/
+
+window.onclick = function(event) {
+
+    const modal = document.getElementById("detailModal");
+
+    if (event.target === modal) {
+
+        closeModal();
+
+    }
+
+};
+
+
+/************************************************************
+ * END OF MELBA DAILY KAIZEN DASHBOARD
+ ************************************************************/
+
 </script>
+
 </body>
 </html>
