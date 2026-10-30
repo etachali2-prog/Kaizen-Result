@@ -145,7 +145,7 @@ footer { text-align: center; color: #64748b; padding: 25px; }
 
 <script>
 // REPLACE WITH YOUR DEPLOYED GOOGLE APPS SCRIPT WEB APP URL
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx6gq7xwJu5MdPCO7HuKkZWHMkq7hQKtYr41P61um3NqWDRS3HQ78oYc8C1WzKKnNlG/exec";
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx3VVvrhxbZjAbCvo_ggs-trnFsxtMAdfc9ppZXUkluaN2_Xk5CbUsTgD6srVwwCGNK/exec";
 
 let allRecords = [];
 let filteredRecords = [];
@@ -268,26 +268,26 @@ function viewDetails(index) {
     if (!record) return;
 
     const questions = [
-        "Bakki hojii qulqulluu fi sirrii ta'uu isaa mirkaneessuu",
-        "Meeshaaleen hojii barbaachisoo ta'an bakka isaanii irratti argamuu",
-        "Meeshaalee hin barbaachifne bakka hojii irraa qulqulleessuu",
-        "Faayilootaa fi dokumeentoota sirnaan qindeessuu",
-        "Hojii guyyaa sanaaf karoorfame adda baasuu",
-        "Hojii dursa kennamuuf qabu adda baasuu",
-        "Hojiiwwan yeroo isaanii eeganii raawwatamuu isaanii hordofuu",
-        "Yeroo hojii sirnaan fayyadamuu",
-        "Qisaasama yeroo, meeshaa fi qabeenyaa xiqqeessuu",
-        "Rakkoo hojii keessatti mul'ate adda baasuu",
-        "Sababa rakkoo sanaa adda baasuu",
-        "Furmaata rakkoo sanaaf tarkaanfii fudhachuu",
-        "Hojii har'aa kan kaleessaa caalaa fooyyeessuuf yaada haaraa qabaachuu",
-        "Yaada fooyya'iinsaa hojjettoota irraa walitti qabu",
-        "Tajaajila kennamu irratti qulqullinaa fi saffisa mirkaneessuu",
-        "Komii ykn yaada maamilaa/hojii waliin walqabatu galmeessuu",
-        "Hojiiwwan raawwataman ragaan isaanii sirnaan qabamuu",
-        "Seera, qajeelfama fi tartiiba hojii kabajuu",
-        "Hojii guyyaa sanaa madaaluu",
-        "Boruuf hojii fooyya'aa fi tarkaanfii itti aanu murteessuu"
+        "1. Bakki hojii qulqulluu fi sirrii ta'uu isaa mirkaneessuu",
+        "2. Meeshaaleen hojii barbaachisoo ta'an bakka isaanii irratti argamuu",
+        "3. Meeshaalee hin barbaachifne bakka hojii irraa qulqulleessuu",
+        "4. Faayilootaa fi dokumeentoota sirnaan qindeessuu",
+        "5. Hojii guyyaa sanaaf karoorfame adda baasuu",
+        "6. Hojii dursa kennamuuf qabu adda baasuu",
+        "7. Hojiiwwan yeroo isaanii eeganii raawwatamuu isaanii hordofuu",
+        "8. Yeroo hojii sirnaan fayyadamuu",
+        "9. Qisaasama yeroo, meeshaa fi qabeenyaa xiqqeessuu",
+        "10. Rakkoo hojii keessatti mul'ate adda baasuu",
+        "11. Sababa rakkoo sanaa adda baasuu",
+        "12. Furmaata rakkoo sanaaf tarkaanfii fudhachuu",
+        "13. Hojii har'aa kan kaleessaa caalaa fooyyeessuuf yaada haaraa qabaachuu",
+        "14. Yaada fooyya'iinsaa hojjettoota irraa walitti qabu",
+        "15. Tajaajila kennamu irratti qulqullinaa fi saffisa mirkaneessuu",
+        "16. Komii ykn yaada maamilaa/hojii waliin walqabatu galmeessuu",
+        "17. Hojiiwwan raawwataman ragaan isaanii sirnaan qabamuu",
+        "18. Seera, qajeelfama fi tartiiba hojii kabajuu",
+        "19. Hojii guyyaa sanaa madaaluu",
+        "20. Boruuf hojii fooyya'aa fi tarkaanfii itti aanu murteessuu"
     ];
 
     let html = `
