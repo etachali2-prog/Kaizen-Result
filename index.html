@@ -145,7 +145,7 @@ footer { text-align: center; color: #64748b; padding: 25px; }
 
 <script>
 // REPLACE WITH YOUR DEPLOYED GOOGLE APPS SCRIPT WEB APP URL
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx3VVvrhxbZjAbCvo_ggs-trnFsxtMAdfc9ppZXUkluaN2_Xk5CbUsTgD6srVwwCGNK/exec";
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw3_5z9p1eCmr9yKon7X3F07Zm9tbsrnaXLntDQAJsj4iRN0vAT6O_vxL-DPG0zpkmq/exec";
 
 let allRecords = [];
 let filteredRecords = [];
@@ -303,7 +303,12 @@ function viewDetails(index) {
         <div class="table-container">
             <table>
                 <thead>
-                    <tr><th>No.</th><th>Evaluation Criteria</th><th>Answer</th><th>Comment / Observation</th></tr>
+                    <tr>
+                        <th style="width: 50px;">No.</th>
+                        <th>Evaluation Criteria</th>
+                        <th style="width: 140px;">Answer</th>
+                        <th>Comment / Observation</th>
+                    </tr>
                 </thead>
                 <tbody>
     `;
@@ -311,13 +316,23 @@ function viewDetails(index) {
     for (let i = 1; i <= 20; i++) {
         const answer = record["Q" + i + " Answer"] || "";
         const comment = record["Q" + i + " Comment"] || "";
-        let ansClass = answer === "Eeyyee" ? "answer-yes" : (answer === "Lakki" ? "answer-no" : "");
+
+        let displayAnswer = answer;
+        if (answer === "Lakki") displayAnswer = "Miti";
+
+        let ansClass = (displayAnswer === "Eeyyee") ? "answer-yes" : (displayAnswer === "Miti" ? "answer-no" : "");
 
         html += `
             <tr>
                 <td>${i}</td>
                 <td>${escapeHTML(questions[i - 1])}</td>
-                <td class="${ansClass}">${escapeHTML(answer)}</td>
+                <td>
+                    <select class="p-1 border rounded text-sm w-full font-bold ${ansClass}" disabled>
+                        <option value="">--</option>
+                        <option value="Eeyyee" ${displayAnswer === "Eeyyee" ? "selected" : ""}>Eeyyee</option>
+                        <option value="Miti" ${displayAnswer === "Miti" ? "selected" : ""}>Miti</option>
+                    </select>
+                </td>
                 <td>${escapeHTML(comment)}</td>
             </tr>
         `;
