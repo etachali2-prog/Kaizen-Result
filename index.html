@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MELBA Kaizen Records</title>
+<title>MELBA Daily Kaizen Records</title>
 
 <style>
 * {
@@ -15,9 +15,9 @@
 body {
     margin: 0;
     padding: 20px;
-    font-family: Arial, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     background: #edf2f7;
-    color: #243247;
+    color: #263548;
 }
 
 .container {
@@ -28,13 +28,14 @@ body {
 .header {
     background: #142d4e;
     color: white;
-    padding: 24px;
+    padding: 25px;
     border-radius: 10px;
     margin-bottom: 20px;
 }
 
 .header h1 {
     margin: 0 0 8px;
+    font-size: 25px;
 }
 
 .header p {
@@ -47,16 +48,15 @@ body {
     padding: 18px;
     border-radius: 9px;
     display: flex;
-    gap: 12px;
     flex-wrap: wrap;
-    margin-bottom: 18px;
+    gap: 12px;
+    margin-bottom: 20px;
 }
 
-.toolbar input,
-.toolbar select {
+.toolbar input {
     flex: 1;
     min-width: 180px;
-    padding: 11px;
+    padding: 12px;
     border: 1px solid #ccd5e0;
     border-radius: 6px;
     font-size: 14px;
@@ -64,10 +64,16 @@ body {
 
 button {
     border: none;
-    padding: 11px 17px;
+    padding: 11px 18px;
     border-radius: 6px;
     cursor: pointer;
     font-weight: bold;
+    font-size: 14px;
+}
+
+button:disabled {
+    opacity: .6;
+    cursor: not-allowed;
 }
 
 .refresh-btn {
@@ -78,7 +84,16 @@ button {
 .view-btn {
     background: #17365d;
     color: white;
-    padding: 8px 12px;
+}
+
+.print-btn {
+    background: #176b50;
+    color: white;
+}
+
+.close-btn {
+    background: white;
+    color: #142d4e;
 }
 
 .summary {
@@ -90,7 +105,7 @@ button {
 
 .summary-card {
     background: white;
-    padding: 18px;
+    padding: 20px;
     border-radius: 9px;
     border-left: 4px solid #176b50;
 }
@@ -102,9 +117,21 @@ button {
 
 .summary-card strong {
     display: block;
-    font-size: 25px;
+    font-size: 26px;
     margin-top: 8px;
     color: #17365d;
+}
+
+.status {
+    padding: 14px;
+    margin-bottom: 15px;
+    background: white;
+    border-radius: 7px;
+    color: #526276;
+}
+
+.status.error {
+    color: #b42318;
 }
 
 .table-container {
@@ -121,7 +148,7 @@ table {
 }
 
 th, td {
-    padding: 12px;
+    padding: 13px;
     text-align: left;
     border-bottom: 1px solid #e3e9ef;
     font-size: 13px;
@@ -137,30 +164,18 @@ tr:hover td {
     background: #f6f9fc;
 }
 
-.status {
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 7px;
-    background: white;
-    color: #526276;
-}
-
-.error {
-    color: #b42318;
-}
-
 .modal {
     display: none;
     position: fixed;
     z-index: 1000;
     inset: 0;
-    background: rgba(0,0,0,0.6);
-    padding: 20px;
+    background: rgba(0,0,0,.65);
+    padding: 15px;
     overflow-y: auto;
 }
 
 .modal-content {
-    max-width: 950px;
+    max-width: 1000px;
     margin: 20px auto;
     background: white;
     border-radius: 10px;
@@ -172,8 +187,9 @@ tr:hover td {
     color: white;
     padding: 18px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    gap: 10px;
 }
 
 .modal-header h2 {
@@ -181,83 +197,120 @@ tr:hover td {
     font-size: 20px;
 }
 
-.close-btn {
-    background: #fff;
-    color: #142d4e;
-}
-
 .modal-body {
-    padding: 20px;
+    padding: 22px;
 }
 
 .info-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
+    gap: 12px;
     margin-bottom: 20px;
 }
 
 .info-box {
     background: #f1f5f9;
-    padding: 12px;
-    border-radius: 6px;
+    padding: 14px;
+    border-radius: 7px;
+    overflow-wrap: anywhere;
 }
 
 .info-box small {
-    color: #64748b;
     display: block;
-    margin-bottom: 5px;
+    color: #64748b;
+    margin-bottom: 7px;
 }
 
 .info-box strong {
-    overflow-wrap: anywhere;
-}
-
-.detail-question {
-    border: 1px solid #dce4ec;
-    border-radius: 7px;
-    margin-bottom: 12px;
-    padding: 13px;
-    break-inside: avoid;
-}
-
-.detail-question h4 {
-    margin: 0 0 10px;
     color: #17365d;
-}
-
-.answer {
-    font-weight: bold;
-    margin-bottom: 8px;
-}
-
-.answer-yes {
-    color: #176b50;
-}
-
-.answer-no {
-    color: #b42318;
-}
-
-.comment {
-    background: #f1f5f9;
-    padding: 10px;
-    border-radius: 5px;
-    min-height: 35px;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
 }
 
 .result-box {
     background: #eaf3ef;
-    padding: 15px;
-    border-radius: 7px;
-    margin-bottom: 20px;
+    border: 1px solid #c8e0d4;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 22px;
 }
 
-.result-box strong {
-    font-size: 20px;
+.result-box h3 {
+    margin: 0 0 15px;
+    color: #17365d;
+}
+
+.result-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 35px;
+}
+
+.result-item span {
+    display: block;
+    color: #526276;
+    font-size: 13px;
+}
+
+.result-item strong {
+    display: block;
     color: #176b50;
+    font-size: 26px;
+    margin-top: 6px;
+}
+
+.detail-question {
+    border: 1px solid #dce4ec;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 13px;
+    break-inside: avoid;
+}
+
+.detail-question h4 {
+    margin: 0 0 12px;
+    line-height: 1.5;
+    color: #17365d;
+}
+
+.answer-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 13px;
+    font-size: 14px;
+}
+
+.answer-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.answer-yes {
+    background: #d9f1e4;
+    color: #176b50;
+}
+
+.answer-no {
+    background: #fde3e3;
+    color: #b42318;
+}
+
+.comment-heading {
+    font-size: 13px;
+    font-weight: bold;
+    color: #526276;
+    margin-bottom: 7px;
+}
+
+.comment-box {
+    background: #f1f5f9;
+    padding: 12px;
+    border-radius: 6px;
+    min-height: 40px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-size: 14px;
 }
 
 .footer {
@@ -267,9 +320,19 @@ tr:hover td {
     font-size: 12px;
 }
 
+.no-records {
+    text-align: center;
+    padding: 25px;
+    color: #64748b;
+}
+
 @media(max-width:650px) {
     body {
-        padding: 10px;
+        padding: 9px;
+    }
+
+    .header h1 {
+        font-size: 20px;
     }
 
     .summary {
@@ -280,8 +343,8 @@ tr:hover td {
         grid-template-columns: 1fr;
     }
 
-    .header h1 {
-        font-size: 21px;
+    .modal-body {
+        padding: 13px;
     }
 }
 
@@ -289,6 +352,15 @@ tr:hover td {
     body {
         background: white;
         padding: 0;
+    }
+
+    .container,
+    .toolbar,
+    .summary,
+    .status,
+    .table-container,
+    .footer {
+        display: none !important;
     }
 
     .modal {
@@ -302,6 +374,7 @@ tr:hover td {
     .modal-content {
         max-width: 100%;
         margin: 0;
+        border-radius: 0;
     }
 
     .modal-header {
@@ -346,7 +419,8 @@ tr:hover td {
             onchange="displayRecords()"
         >
 
-        <button class="refresh-btn" onclick="loadRecords()">
+        <button class="refresh-btn" id="refreshBtn"
+                onclick="loadRecords()">
             Refresh Records
         </button>
 
@@ -360,19 +434,19 @@ tr:hover td {
         </div>
 
         <div class="summary-card">
-            <span>Average Score</span>
+            <span>Average Percentage</span>
             <strong id="averageScore">0%</strong>
         </div>
 
         <div class="summary-card">
-            <span>Departments</span>
+            <span>Total Departments</span>
             <strong id="totalDepartments">0</strong>
         </div>
 
     </div>
 
     <div id="status" class="status">
-        Loading Kaizen records...
+        Loading records...
     </div>
 
     <div class="table-container">
@@ -392,7 +466,7 @@ tr:hover td {
 
             <tbody id="recordsBody">
                 <tr>
-                    <td colspan="7">Loading records...</td>
+                    <td colspan="7">Loading...</td>
                 </tr>
             </tbody>
         </table>
@@ -407,7 +481,7 @@ tr:hover td {
 </div>
 
 
-<!-- DETAILS MODAL -->
+<!-- DETAILS WINDOW -->
 
 <div class="modal" id="detailsModal">
 
@@ -427,7 +501,7 @@ tr:hover td {
             <div id="detailsContent"></div>
 
             <div class="no-print" style="margin-top:20px;">
-                <button class="refresh-btn" onclick="printDetails()">
+                <button class="print-btn" onclick="printDetails()">
                     Print / Save PDF
                 </button>
             </div>
@@ -441,62 +515,168 @@ tr:hover td {
 
 <script>
 
-// Paste your deployed Google Apps Script URL here.
+// =======================================
+// GOOGLE APPS SCRIPT WEB APP URL
+// =======================================
+
 const SCRIPT_URL =
-"https://script.google.com/macros/s/AKfycbwiFUiAkql3l7gge4WP74_-aLyWr0XrRgwfnzRyO5lJqmxTdOYlYNo6Jz7fMiuX3dYz/exec";
+"https://script.google.com/macros/s/AKfycby--FB_IP5elfRiCixp9D422KPm6xecmWlPEfWQY22dxKvmlnnFbqdpR6hyXdIfeLEJ/exec";
+
+
+// =======================================
+// CHECKLIST QUESTIONS
+// =======================================
+
+const questions = [
+    "Bakki hojii qulqulluu fi sirrii ta'uu isaa mirkaneessuu",
+    "Meeshaaleen hojii barbaachisoo ta'an bakka isaanii irratti argamuu",
+    "Meeshaalee hin barbaachifne bakka hojii irraa qulqulleessuu",
+    "Faayilootaa fi dokumeentoota sirnaan qindeessuu",
+    "Hojii guyyaa sanaaf karoorfame adda baasuu",
+    "Hojii dursa kennamuuf qabu adda baasuu",
+    "Hojiiwwan yeroo isaanii eeganii raawwatamuu isaanii hordofuu",
+    "Yeroo hojii sirnaan fayyadamuu",
+    "Qisaasama yeroo, meeshaa fi qabeenyaa xiqqeessuu",
+    "Rakkoo hojii keessatti mul'ate adda baasuu",
+    "Sababa rakkoo sanaa adda baasuu",
+    "Furmaata rakkoo sanaaf tarkaanfii fudhachuu",
+    "Hojii har'aa kan kaleessaa caalaa fooyyeessuuf yaada haaraa qabaachuu",
+    "Yaada fooyya'iinsaa hojjettoota irraa walitti qabu",
+    "Tajaajila kennamu irratti qulqullinaa fi saffisa mirkaneessuu",
+    "Komii ykn yaada maamilaa/hojii waliin walqabatu galmeessuu",
+    "Hojiiwwan raawwataman ragaan isaanii sirnaan qabamuu",
+    "Seera, qajeelfama fi tartiiba hojii kabajuu",
+    "Hojii guyyaa sanaa madaaluu",
+    "Boruuuf hojii fooyya'aa fi tarkaanfii itti aanu murteessuu"
+];
+
+
+// =======================================
+// GLOBAL DATA
+// =======================================
 
 let records = [];
 let headers = [];
 
 
-// Load records using JSONP.
+// =======================================
+// GET COLUMN BY HEADER
+// =======================================
+
+function getColumn(row, name) {
+
+    const index = headers.indexOf(name);
+
+    if (index === -1) {
+        return "";
+    }
+
+    return row[index] || "";
+
+}
+
+
+// =======================================
+// CALCULATE SCORE FROM 20 ANSWERS
+// =======================================
+
+function calculateRecordScore(row) {
+
+    let total = 0;
+    let answered = 0;
+
+    for (let i = 1; i <= 20; i++) {
+
+        const answer = getColumn(row, "Q" + i + " Answer");
+
+        if (answer === "Yes") {
+            total++;
+            answered++;
+        }
+
+        if (answer === "No") {
+            answered++;
+        }
+
+    }
+
+    const percentage = (total / 20) * 100;
+
+    return {
+        total: total,
+        percentage: percentage,
+        answered: answered
+    };
+
+}
+
+
+// =======================================
+// LOAD RECORDS FROM GOOGLE SHEETS
+// =======================================
+
 function loadRecords() {
 
     const status = document.getElementById("status");
+    const refreshBtn = document.getElementById("refreshBtn");
 
-    status.textContent = "Loading records from Google Sheets...";
+    status.textContent = "Connecting to Google Sheets...";
     status.className = "status";
 
-    document.getElementById("recordsBody").innerHTML =
-        '<tr><td colspan="7">Loading...</td></tr>';
+    refreshBtn.disabled = true;
 
-    // Remove an earlier script request if it still exists.
     const oldScript = document.getElementById("recordsScript");
 
     if (oldScript) {
         oldScript.remove();
     }
 
-    // Create the JSONP callback.
-    window.handleKaizenRecords = function(data) {
+    // Unique callback name for this request.
+    const callbackName =
+        "kaizenCallback_" + Date.now();
 
-        if (!data || !data.success) {
+    window[callbackName] = function(data) {
+
+        try {
+
+            if (!data || data.success !== true) {
+                throw new Error(
+                    data && data.message
+                    ? data.message
+                    : "Google Sheets returned an error."
+                );
+            }
+
+            headers = data.headers || [];
+            records = data.records || [];
+
+            displayRecords();
+            updateSummary();
 
             status.textContent =
-                data && data.message
-                    ? data.message
-                    : "Unable to retrieve records.";
+                "Records loaded successfully. Total submissions: " +
+                records.length;
 
+            status.className = "status";
+
+        } catch (error) {
+
+            status.textContent = error.message;
             status.className = "status error";
-            return;
-        }
 
-        headers = data.headers || [];
-        records = data.records || [];
+        } finally {
 
-        displayRecords();
-        updateSummary();
+            refreshBtn.disabled = false;
 
-        status.textContent =
-            "Records loaded successfully. Total records: " +
-            records.length;
+            const script =
+                document.getElementById("recordsScript");
 
-        status.className = "status";
+            if (script) {
+                script.remove();
+            }
 
-        const script = document.getElementById("recordsScript");
+            delete window[callbackName];
 
-        if (script) {
-            script.remove();
         }
 
     };
@@ -507,17 +687,25 @@ function loadRecords() {
 
     script.src =
         SCRIPT_URL +
-        "?callback=handleKaizenRecords&t=" +
-        new Date().getTime();
+        "?callback=" + encodeURIComponent(callbackName) +
+        "&t=" + Date.now();
+
+    script.onload = function() {
+        // The callback processes the returned data.
+    };
 
     script.onerror = function() {
 
         status.textContent =
-            "Connection failed. Check your Web App URL, deployment and internet connection.";
+            "Connection failed. Check the Web App URL, deployment and permissions.";
 
         status.className = "status error";
 
+        refreshBtn.disabled = false;
+
         script.remove();
+
+        delete window[callbackName];
 
     };
 
@@ -526,34 +714,28 @@ function loadRecords() {
 }
 
 
-// Read a column using its header name.
-function getColumn(row, headerName) {
+// =======================================
+// DISPLAY RECORDS TABLE
+// =======================================
 
-    const index = headers.indexOf(headerName);
-
-    if (index === -1) return "";
-
-    return row[index] || "";
-
-}
-
-
-// Display submission summary table.
 function displayRecords() {
 
     const tbody = document.getElementById("recordsBody");
 
     const search =
-        document.getElementById("searchInput").value.toLowerCase();
+        document.getElementById("searchInput")
+        .value.trim().toLowerCase();
 
     const dateFilter =
         document.getElementById("dateFilter").value;
 
+    tbody.innerHTML = "";
+
     const filtered = records.filter(function(row) {
 
-        const date = getColumn(row, "Date");
-        const department = getColumn(row, "Department");
         const employee = getColumn(row, "Employee Name");
+        const department = getColumn(row, "Department");
+        const date = getColumn(row, "Date");
 
         const matchesSearch =
             employee.toLowerCase().includes(search) ||
@@ -566,41 +748,44 @@ function displayRecords() {
 
     });
 
-    tbody.innerHTML = "";
-
     if (filtered.length === 0) {
 
-        tbody.innerHTML =
-            '<tr><td colspan="7">No matching records found.</td></tr>';
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+
+        td.colSpan = 7;
+        td.className = "no-records";
+        td.textContent = "No records found.";
+
+        tr.appendChild(td);
+        tbody.appendChild(tr);
 
         return;
+
     }
 
     filtered.forEach(function(row, index) {
 
         const originalIndex = records.indexOf(row);
 
-        const date = getColumn(row, "Date");
-        const department = getColumn(row, "Department");
-        const employee = getColumn(row, "Employee Name");
-        const score = getColumn(row, "Total Score");
-        const percentage = getColumn(row, "Percentage");
+        const score = calculateRecordScore(row);
 
         const tr = document.createElement("tr");
 
         const values = [
             index + 1,
-            date,
-            department,
-            employee,
-            score,
-            percentage
+            getColumn(row, "Date"),
+            getColumn(row, "Department"),
+            getColumn(row, "Employee Name"),
+            score.total + " / 20",
+            score.percentage.toFixed(1) + "%"
         ];
 
         values.forEach(function(value) {
 
             const td = document.createElement("td");
             td.textContent = value;
+
             tr.appendChild(td);
 
         });
@@ -608,6 +793,7 @@ function displayRecords() {
         const actionCell = document.createElement("td");
 
         const button = document.createElement("button");
+
         button.className = "view-btn";
         button.textContent = "View Details";
 
@@ -625,21 +811,24 @@ function displayRecords() {
 }
 
 
-// Update dashboard summary.
+// =======================================
+// DASHBOARD SUMMARY
+// =======================================
+
 function updateSummary() {
 
     document.getElementById("totalRecords").textContent =
         records.length;
 
     let totalPercentage = 0;
+
     const departments = new Set();
 
     records.forEach(function(row) {
 
-        const percentage =
-            parseFloat(getColumn(row, "Percentage")) || 0;
+        const score = calculateRecordScore(row);
 
-        totalPercentage += percentage;
+        totalPercentage += score.percentage;
 
         const department = getColumn(row, "Department");
 
@@ -649,7 +838,7 @@ function updateSummary() {
 
     });
 
-    const average = records.length
+    const average = records.length > 0
         ? totalPercentage / records.length
         : 0;
 
@@ -662,24 +851,31 @@ function updateSummary() {
 }
 
 
-// Display all 20 answers and their comments.
+// =======================================
+// DISPLAY ONE COMPLETE CHECKLIST
+// =======================================
+
 function viewDetails(index) {
 
     const row = records[index];
 
-    if (!row) return;
-
-    const date = getColumn(row, "Date");
-    const department = getColumn(row, "Department");
-    const employee = getColumn(row, "Employee Name");
-    const totalScore = getColumn(row, "Total Score");
-    const percentage = getColumn(row, "Percentage");
-    const submissionTime = getColumn(row, "Submission Time");
+    if (!row) {
+        return;
+    }
 
     const content = document.getElementById("detailsContent");
 
     content.innerHTML = "";
 
+    const date = getColumn(row, "Date");
+    const department = getColumn(row, "Department");
+    const employee = getColumn(row, "Employee Name");
+    const submissionTime = getColumn(row, "Submission Time");
+
+    // Calculate result from all 20 answers.
+    const score = calculateRecordScore(row);
+
+    // General information.
     const infoGrid = document.createElement("div");
     infoGrid.className = "info-grid";
 
@@ -709,81 +905,117 @@ function viewDetails(index) {
 
     content.appendChild(infoGrid);
 
+
+    // Overall result.
     const resultBox = document.createElement("div");
     resultBox.className = "result-box";
 
-    const resultTitle = document.createElement("div");
-    resultTitle.textContent = "Overall Checklist Result";
+    const resultHeading = document.createElement("h3");
+    resultHeading.textContent = "Overall Checklist Result";
 
-    const result = document.createElement("strong");
-    result.textContent =
-        totalScore + " / 20  |  " + percentage;
+    const resultGrid = document.createElement("div");
+    resultGrid.className = "result-grid";
 
-    resultBox.appendChild(resultTitle);
-    resultBox.appendChild(result);
+    const totalItem = document.createElement("div");
+    totalItem.className = "result-item";
+
+    const totalLabel = document.createElement("span");
+    totalLabel.textContent = "Total Score";
+
+    const totalValue = document.createElement("strong");
+    totalValue.textContent = score.total + " / 20";
+
+    totalItem.appendChild(totalLabel);
+    totalItem.appendChild(totalValue);
+
+    const percentageItem = document.createElement("div");
+    percentageItem.className = "result-item";
+
+    const percentageLabel = document.createElement("span");
+    percentageLabel.textContent = "Overall Percentage";
+
+    const percentageValue = document.createElement("strong");
+    percentageValue.textContent =
+        score.percentage.toFixed(1) + "%";
+
+    percentageItem.appendChild(percentageLabel);
+    percentageItem.appendChild(percentageValue);
+
+    resultGrid.appendChild(totalItem);
+    resultGrid.appendChild(percentageItem);
+
+    resultBox.appendChild(resultHeading);
+    resultBox.appendChild(resultGrid);
 
     content.appendChild(resultBox);
 
 
-    // Checklist questions.
-    const questions = [
-        "Bakki hojii qulqulluu fi sirrii ta'uu isaa mirkaneessuu",
-        "Meeshaaleen hojii barbaachisoo ta'an bakka isaanii irratti argamuu",
-        "Meeshaalee hin barbaachifne bakka hojii irraa qulqulleessuu",
-        "Faayilootaa fi dokumeentoota sirnaan qindeessuu",
-        "Hojii guyyaa sanaaf karoorfame adda baasuu",
-        "Hojii dursa kennamuuf qabu adda baasuu",
-        "Hojiiwwan yeroo isaanii eeganii raawwatamuu isaanii hordofuu",
-        "Yeroo hojii sirnaan fayyadamuu",
-        "Qisaasama yeroo, meeshaa fi qabeenyaa xiqqeessuu",
-        "Rakkoo hojii keessatti mul'ate adda baasuu",
-        "Sababa rakkoo sanaa adda baasuu",
-        "Furmaata rakkoo sanaaf tarkaanfii fudhachuu",
-        "Hojii har'aa kan kaleessaa caalaa fooyyeessuuf yaada haaraa qabaachuu",
-        "Yaada fooyya'iinsaa hojjettoota irraa walitti qabu",
-        "Tajaajila kennamu irratti qulqullinaa fi saffisa mirkaneessuu",
-        "Komii ykn yaada maamilaa/hojii waliin walqabatu galmeessuu",
-        "Hojiiwwan raawwataman ragaan isaanii sirnaan qabamuu",
-        "Seera, qajeelfama fi tartiiba hojii kabajuu",
-        "Hojii guyyaa sanaa madaaluu",
-        "Boruuuf hojii fooyya'aa fi tarkaanfii itti aanu murteessuu"
-    ];
-
-
+    // Display all 20 questions.
     for (let i = 1; i <= 20; i++) {
 
         const answer = getColumn(row, "Q" + i + " Answer");
+
         const comment = getColumn(row, "Q" + i + " Comment");
 
         const card = document.createElement("div");
         card.className = "detail-question";
 
-        const title = document.createElement("h4");
-        title.textContent = i + ". " + questions[i - 1];
+        const questionTitle = document.createElement("h4");
 
-        const answerDiv = document.createElement("div");
-        answerDiv.className =
-            "answer " +
-            (answer === "Yes" ? "answer-yes" :
-             answer === "No" ? "answer-no" : "");
+        questionTitle.textContent =
+            i + ". " + questions[i - 1];
 
-        answerDiv.textContent = "Answer: " + (answer || "-");
+        // Yes / No answer.
+        const answerLine = document.createElement("div");
+        answerLine.className = "answer-line";
 
-        const commentTitle = document.createElement("strong");
-        commentTitle.textContent = "Comment:";
+        const answerLabel = document.createElement("strong");
+        answerLabel.textContent = "Answer:";
 
-        const commentDiv = document.createElement("div");
-        commentDiv.className = "comment";
-        commentDiv.textContent = comment || "No comment entered.";
+        const answerBadge = document.createElement("span");
+        answerBadge.className = "answer-badge";
 
-        card.appendChild(title);
-        card.appendChild(answerDiv);
-        card.appendChild(commentTitle);
-        card.appendChild(commentDiv);
+        if (answer === "Yes") {
+
+            answerBadge.classList.add("answer-yes");
+            answerBadge.textContent = "YES";
+
+        } else if (answer === "No") {
+
+            answerBadge.classList.add("answer-no");
+            answerBadge.textContent = "NO";
+
+        } else {
+
+            answerBadge.textContent = "Not answered";
+
+        }
+
+        answerLine.appendChild(answerLabel);
+        answerLine.appendChild(answerBadge);
+
+
+        // Individual question comment.
+        const commentHeading = document.createElement("div");
+        commentHeading.className = "comment-heading";
+        commentHeading.textContent = "Comment";
+
+        const commentBox = document.createElement("div");
+        commentBox.className = "comment-box";
+
+        commentBox.textContent =
+            comment || "No comment entered.";
+
+
+        card.appendChild(questionTitle);
+        card.appendChild(answerLine);
+        card.appendChild(commentHeading);
+        card.appendChild(commentBox);
 
         content.appendChild(card);
 
     }
+
 
     if (submissionTime) {
 
@@ -794,17 +1026,27 @@ function viewDetails(index) {
 
     }
 
-    document.getElementById("detailsModal").style.display = "block";
+    document.getElementById("detailsModal").style.display =
+        "block";
 
 }
 
+
+// =======================================
+// CLOSE DETAILS
+// =======================================
 
 function closeDetails() {
 
-    document.getElementById("detailsModal").style.display = "none";
+    document.getElementById("detailsModal").style.display =
+        "none";
 
 }
 
+
+// =======================================
+// PRINT CHECKLIST DETAILS
+// =======================================
 
 function printDetails() {
 
@@ -813,7 +1055,7 @@ function printDetails() {
 }
 
 
-// Close modal when clicking outside it.
+// Close modal by clicking outside.
 document.getElementById("detailsModal").addEventListener(
     "click",
     function(event) {
@@ -826,8 +1068,15 @@ document.getElementById("detailsModal").addEventListener(
 );
 
 
-// Load data when page opens.
-window.addEventListener("DOMContentLoaded", loadRecords);
+// =======================================
+// LOAD RECORDS WHEN PAGE OPENS
+// =======================================
+
+window.addEventListener("DOMContentLoaded", function() {
+
+    loadRecords();
+
+});
 
 </script>
 
