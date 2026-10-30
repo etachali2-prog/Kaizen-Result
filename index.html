@@ -512,3 +512,566 @@ footer {
  GOOGLE APPS SCRIPT WEB APP URL
 ********************************************************/
 
+const WEB_APP_URL =
+"https://script.google.com/macros/s/AKfycbx26G-UhQy2zAURgsmjg0UxZFQWdxp76wQlYdYHmzxe9BUZ5jtJsv-v-imLvWX5wJBm/exec";
+
+
+/********************************************************
+ GLOBAL DATA
+********************************************************/
+
+let allRecords = [];
+let filteredRecords = [];
+
+
+/********************************************************
+ ESCAPE HTML
+********************************************************/
+
+function escapeHTML(value) {
+
+    return String(value ?? "").replace(/[&<>"']/g, function(char) {
+
+        return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        }[char];
+
+    });
+
+}
+
+
+/********************************************************
+ LOAD RECORDS FROM GOOGLE SHEETS
+********************************************************/
+
+async function loadRecords() {
+
+    const status = document.getElementById("status");
+    const refreshBtn = document.getElementById("refreshBtn");
+
+    status.className = "status";
+    status.textContent = "Connecting to Google Sheets...";
+
+    refreshBtn.disabled = true;
+    refreshBtn.textContent = "Loading...";
+
+    try {
+
+        const response = await fetch(
+            WEB_APP_URL + "?action=getRecords&t=" + Date.now()
+        );
+
+        if (!response.ok) {
+            throw new Error("HTTP error: " + response.status);
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+            throw new Error(data.error || "Unable to retrieve records.");
+        }
+
+        if (!Array.isArray(data.records)) {
+            throw new Error("Google Sheets returned an invalid records list.");
+        }
+
+        allRecords = data.records;
+
+        updateDepartments();
+        updateSummary();
+        displayRecords();
+
+        status.className = "status success";
+
+        status.textContent =
+            "✓ Connected successfully. " +
+            allRecords.length +
+            " records retrieved from Google Sheets.";
+
+    } catch(error) {
+
+        status.className = "status error";
+
+        status.textContent =
+            "Connection error: " + error.message;
+
+        console.error(error);
+
+    } finally {
+
+        refreshBtn.disabled = false;
+        refreshBtn.textContent = "↻ Refresh Records";
+
+    }
+
+}
+
+
+/********************************************************
+ UPDATE DEPARTMENT FILTER
+********************************************************/
+
+function updateDepartments() {
+
+    const select = document.getElementById("departmentFilter");
+
+    const currentValue = select.value;
+
+    const departments = [
+        ...new Set(
+            allRecords.map(record => record["Department"])
+                .filter(Boolean)
+        )
+    ].sort();
+
+    select.innerHTML =
+        '<option value="">All Departments</option>';
+
+    departments.forEach(department => {
+
+        const option = document.createElement("option");
+
+        option.value = department;
+        option.textContent = department;
+
+        select.appendChild(option);
+
+    });
+
+    select.value = departments.includes(currentValue)
+        ? currentValue : "";
+
+}
+
+
+/********************************************************
+ UPDATE SUMMARY
+********************************************************/
+
+function updateSummary() {
+
+    const departments = new Set();
+
+    let totalScore = 0;
+    let count = 0;
+
+    allRecords.forEach(record => {
+
+        if (record["Department"]) {
+            departments.add(record["Department"]);
+        }
+
+        let percentage = parseFloat(
+            String(record["Percentage"] || "").replace("%", "")
+        );
+
+        if (!isNaN(percentage)) {
+            totalScore += percentage;
+            count++;
+        }
+
+    });
+
+    document.getElementById("totalRecords").textContent =
+        allRecords.length;
+
+    document.getElementById("totalDepartments").textContent =
+        departments.size;
+
+    document.getElementById("averageScore").textContent =
+        count
+        ? (totalScore / count).toFixed(1) + "%"
+        : "0%";
+
+}
+
+
+/********************************************************
+ FILTER AND DISPLAY RECORDS
+********************************************************/
+
+function displayRecords() {
+
+    const search =
+        document.getElementById("searchInput")
+        .value.toLowerCase().trim();
+
+    const department =
+        document.getElementById("departmentFilter").value;
+
+    const date =
+        document.getElementById("dateFilter").value;
+
+    filteredRecords = allRecords.filter(record => {
+
+        const id = String(record["Submission ID"] || "").toLowerCase();
+
+        const dept = String(record["Department"] || "").toLowerCase();
+
+        const signature = String(record["Signature"] || "").toLowerCase();
+
+        const recordDate = String(record["Date"] || "").substring(0, 10);
+
+        const matchesSearch =
+            !search ||
+            id.includes(search) ||
+            dept.includes(search) ||
+            signature.includes(search);
+
+        const matchesDepartment =
+            !department ||
+            record["Department"] === department;
+
+        const matchesDate =
+            !date || recordDate === date;
+
+        return matchesSearch &&
+               matchesDepartment &&
+               matchesDate;
+
+    });
+
+    const tbody = document.getElementById("recordsBody");
+
+    document.getElementById("recordCount").textContent =
+        filteredRecords.length + " records";
+
+    if (filteredRecords.length === 0) {
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="8" style="text-align:center;padding:30px">
+                    No records found.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+    tbody.innerHTML = filteredRecords.map((record, index) => {
+
+        const originalIndex = allRecords.indexOf(record);
+
+        return `
+
+            <tr>
+
+                <td>${index + 1}</td>
+
+                <td class="font-semibold">
+                    ${escapeHTML(record["Submission ID"])}
+                </td>
+
+                <td>${escapeHTML(record["Date"])}</td>
+
+                <td>${escapeHTML(record["Department"])}</td>
+
+                <td>${escapeHTML(record["Signature"])}</td>
+
+                <td>${escapeHTML(record["Score"])}/100</td>
+
+                <td class="font-bold text-green-700">
+                    ${escapeHTML(record["Percentage"])}
+                </td>
+
+                <td class="no-print">
+
+                    <button class="view"
+                        onclick="viewDetails(${originalIndex})">
+                        View
+                    </button>
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }).join("");
+
+}
+
+
+/********************************************************
+ VIEW ALL 20 CHECKLIST ANSWERS AND COMMENTS
+********************************************************/
+
+function viewDetails(index) {
+
+    const record = allRecords[index];
+
+    if (!record) return;
+
+    const content = document.getElementById("detailContent");
+
+    const questions = [
+
+        "Bakki hojii qulqulluu fi sirrii ta'uu isaa mirkaneessuu",
+
+        "Meeshaaleen hojii barbaachisoo ta'an bakka isaanii irratti argamuu",
+
+        "Meeshaalee hin barbaachifne bakka hojii irraa qulqulleessuu",
+
+        "Faayilootaa fi dokumeentoota sirnaan qindeessuu",
+
+        "Hojii guyyaa sanaaf karoorfame adda baasuu",
+
+        "Hojii dursa kennamuuf qabu adda baasuu",
+
+        "Hojiiwwan yeroo isaanii eeganii raawwatamuu isaanii hordofuu",
+
+        "Yeroo hojii sirnaan fayyadamuu",
+
+        "Qisaasama yeroo, meeshaa fi qabeenyaa xiqqeessuu",
+
+        "Rakkoo hojii keessatti mul'ate adda baasuu",
+
+        "Sababa rakkoo sanaa adda baasuu",
+
+        "Furmaata rakkoo sanaaf tarkaanfii fudhachuu",
+
+        "Hojii har'aa kan kaleessaa caalaa fooyyeessuuf yaada haaraa qabaachuu",
+
+        "Yaada fooyya'iinsaa hojjettoota irraa walitti qabu",
+
+        "Tajaajila kennamu irratti qulqullinaa fi saffisa mirkaneessuu",
+
+        "Komii ykn yaada maamilaa/hojii waliin walqabatu galmeessuu",
+
+        "Hojiiwwan raawwataman ragaan isaanii sirnaan qabamuu",
+
+        "Seera, qajeelfama fi tartiiba hojii kabajuu",
+
+        "Hojii guyyaa sanaa madaaluu",
+
+        "Boruuf hojii fooyya'aa fi tarkaanfii itti aanu murteessuu"
+
+    ];
+
+
+    // Submission information
+
+    let html = `
+
+        <div class="detail-info">
+
+            <div class="detail-box">
+                <small>Submission ID</small>
+                <strong>${escapeHTML(record["Submission ID"])}</strong>
+            </div>
+
+            <div class="detail-box">
+                <small>Date</small>
+                <strong>${escapeHTML(record["Date"])}</strong>
+            </div>
+
+            <div class="detail-box">
+                <small>Department</small>
+                <strong>${escapeHTML(record["Department"])}</strong>
+            </div>
+
+            <div class="detail-box">
+                <small>Signature</small>
+                <strong>${escapeHTML(record["Signature"])}</strong>
+            </div>
+
+            <div class="detail-box">
+                <small>Total Score</small>
+                <strong>${escapeHTML(record["Score"])} / 100</strong>
+            </div>
+
+            <div class="detail-box">
+                <small>Percentage</small>
+                <strong class="text-green-700">
+                    ${escapeHTML(record["Percentage"])}
+                </strong>
+            </div>
+
+        </div>
+
+        <h3 class="font-bold text-lg mb-3 text-[#102d4f]">
+            DAILY KAIZEN EVALUATION CHECKLIST
+        </h3>
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Evaluation Criteria</th>
+                        <th>Answer</th>
+                        <th>Comment / Observation</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+    `;
+
+
+    // Display each of the 20 questions
+
+    for (let i = 1; i <= 20; i++) {
+
+        const answer = record["Q" + i + " Answer"] || "";
+
+        const comment = record["Q" + i + " Comment"] || "";
+
+        let answerClass = "";
+
+        if (answer === "Eeyyee") {
+            answerClass = "answer-yes";
+        }
+
+        if (answer === "Lakki") {
+            answerClass = "answer-no";
+        }
+
+        html += `
+
+            <tr>
+
+                <td>${i}</td>
+
+                <td>${escapeHTML(questions[i - 1])}</td>
+
+                <td class="${answerClass}">
+                    ${escapeHTML(answer)}
+                </td>
+
+                <td>${escapeHTML(comment)}</td>
+
+            </tr>
+
+        `;
+
+    }
+
+
+    html += `
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="mt-6 border-t pt-4">
+
+            <h3 class="font-bold text-lg text-[#102d4f]">
+                Evaluation Summary
+            </h3>
+
+            <p class="mt-2">
+                Total Score:
+                <strong>${escapeHTML(record["Score"])} / 100</strong>
+            </p>
+
+            <p class="mt-2">
+                Achievement:
+                <strong class="text-green-700">
+                    ${escapeHTML(record["Percentage"])}
+                </strong>
+            </p>
+
+        </div>
+
+    `;
+
+
+    content.innerHTML = html;
+
+    document.getElementById("detailModal").style.display = "block";
+
+}
+
+
+/********************************************************
+ CLOSE MODAL
+********************************************************/
+
+function closeModal() {
+
+    document.getElementById("detailModal").style.display = "none";
+
+}
+
+
+/********************************************************
+ CLEAR FILTERS
+********************************************************/
+
+function clearFilters() {
+
+    document.getElementById("searchInput").value = "";
+
+    document.getElementById("departmentFilter").value = "";
+
+    document.getElementById("dateFilter").value = "";
+
+    displayRecords();
+
+}
+
+
+/********************************************************
+ PRINT MAIN RECORDS
+********************************************************/
+
+function printMainRecords() {
+
+    document.getElementById("detailModal").style.display = "none";
+
+    window.print();
+
+}
+
+
+/********************************************************
+ PRINT INDIVIDUAL DETAILS
+********************************************************/
+
+function printDetails() {
+
+    window.print();
+
+}
+
+
+/********************************************************
+ CLOSE MODAL WHEN CLICKING OUTSIDE
+********************************************************/
+
+window.addEventListener("click", function(event) {
+
+    const modal = document.getElementById("detailModal");
+
+    if (event.target === modal) {
+        closeModal();
+    }
+
+});
+
+
+/********************************************************
+ AUTOMATICALLY LOAD RECORDS
+********************************************************/
+
+window.addEventListener("DOMContentLoaded", function() {
+
+    loadRecords();
+
+});
+
+</script>
+
+</body>
+</html>
